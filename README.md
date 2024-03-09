@@ -73,4 +73,4 @@ _✨ 优雅地下载音乐✨_
 
 4.Q:如何使用我自己的API？
   A:在软件目录下找到```api.json```文件，将其中的api项修改为你自己的（格式：``` https://example.com/ ```）
-![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader2&type=Date)
+![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader&type=Date)
