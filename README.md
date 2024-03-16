@@ -49,7 +49,7 @@ _✨ 优雅地下载音乐✨_
 
 ### 使用条款
 
-[使用条款](https://github.com/AZ-Studio-2023/AZMusicDownloader2/blob/main/rule.html)
+[使用条款](https://github.com/AZ-Studio-2023/AZMusicDownloader/blob/main/rule.html)
 
 若您不同意本条款，请退出本页面。您使用本软件即代表您同意本条款。
 
