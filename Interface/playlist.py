@@ -8,6 +8,7 @@ from PyQt5 import QtCore, QtWidgets
 import win32api, win32con
 import os
 import requests
+from mutagen.easyid3 import EasyID3
 
 try:
     u = open("api.json", "r")
@@ -22,7 +23,7 @@ if not os.path.isdir("playlist"):
 
 
 class downloading(QThread):
-    finished = pyqtSignal()
+    finished = pyqtSignal(str)
 
     @pyqtSlot()
     def run(self):
@@ -42,17 +43,19 @@ class downloading(QThread):
             win32api.MessageBox(0, '您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', '错误',
                                 win32con.MB_ICONWARNING)
             return 0
-        response = requests.get(url)
-        response.raise_for_status()
+        response = requests.get(url, stream=True)
+        file_size = int(response.headers.get('content-length', 0))
+        chunk_size = file_size // 100
         path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
-        path = os.path.abspath(path)
-        if os.path.exists(path):
-            return 0
-        with open(path, 'wb') as file:
-            file.write(response.content)
-        text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
-        win32api.MessageBox(0, text, '音乐下载完成', win32con.MB_OK)
-        self.finished.emit()
+        with open(path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                f.write(chunk)
+                downloaded_bytes = f.tell()
+                progress = downloaded_bytes * 100 // file_size
+                if downloaded_bytes % chunk_size == 0:
+                    self.finished.emit(str(progress))
+
+        self.finished.emit(str(200))
 
 
 class getlist(QThread):
@@ -181,10 +184,15 @@ class playlist(QWidget):
         self.PushButton_2.setGeometry(QtCore.QRect(380, 370, 102, 32))
         self.PushButton_2.setObjectName("PushButton_2")
         self.PushButton_2.clicked.connect(self.rundownload)
+        self.pro_bar = ProgressBar(self)
+        self.pro_bar.setGeometry(QtCore.QRect(380, 410, 102, 32))
+        self.pro_bar.setHidden(True)
+        self.pro_bar.setMaximum(100)
         self.retranslateUi()
         self.lworker = getlist()
         self.lworker.finished.connect(self.search)
         self.dworker = downloading()
+        self.dworker.finished.connect(self.download)
         data = get_folders("playlist")
         self.TableWidget.setRowCount(len(data))
         self.TableWidget.clearContents()
@@ -253,12 +261,15 @@ class playlist(QWidget):
     @pyqtSlot()
     def rundownload(self):
         self.PushButton_2.setEnabled(False)
+        self.pro_bar.setValue(0)
+        self.pro_bar.setHidden(False)
         row = self.TableWidget_2.currentIndex().row()
         id_v = str(self.TableWidget_2.item(row, 0).text())
         if id_v != "":
             song_id = id_v
             song = str(self.TableWidget_2.item(row, 1).text())
             singer = str(self.TableWidget_2.item(row, 2).text())
+            album = str(self.TableWidget_2.item(row, 3).text())
             try:
                 musicpath = os.path.join(os.path.expanduser('~'), 'Music')
                 if os.path.exists(musicpath + "\\AZMusicDownload") == False:
@@ -271,7 +282,7 @@ class playlist(QWidget):
             if not os.path.exists("log"):
                 os.mkdir("log")
             u = open("log\\list_download.json", 'w')
-            u.write(json.dumps({"id": song_id, "api": api, "song": song, "singer": singer}))
+            u.write(json.dumps({"id": song_id, "api": api, "song": song, "singer": singer, "album": album}))
             u.close()
             self.dworker.start()
         else:
@@ -279,12 +290,30 @@ class playlist(QWidget):
             self.PushButton_2.setEnabled(False)
             win32api.MessageBox(0, '您选中的行无数据', '错误', win32con.MB_ICONWARNING)
 
-    @pyqtSlot()
-    def download(self):
-        self.TableWidget_2.clearSelection()
-        self.PushButton_2.setEnabled(False)
-        self.dworker.quit()
-
+    def download(self, pro):
+        if pro == "200":
+            self.pro_bar.setValue(100)
+            musicpath = os.path.join(os.path.expanduser('~'), 'Music')
+            u = open("log\\list_download.json", "r")
+            data = json.loads(u.read())
+            u.close()
+            song = data["song"]
+            singer = data["singer"]
+            album = data["album"]
+            path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
+            path = os.path.abspath(path)
+            audio = EasyID3(path)
+            audio['title'] = song
+            audio['album'] = album
+            audio["artist"] = singer
+            audio.save()
+            text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
+            win32api.MessageBox(0, text, '音乐下载完成', win32con.MB_OK)
+            self.TableWidget_2.clearSelection()
+            self.PushButton_2.setEnabled(False)
+            self.pro_bar.setHidden(True)
+        else:
+            self.pro_bar.setValue(int(pro))
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.SubtitleLabel.setText(_translate("self", "导入歌单"))
@@ -296,7 +325,7 @@ class playlist(QWidget):
         self.PushButton_2.setEnabled(False)
 
 
-from qfluentwidgets import ComboBox, LineEdit, PushButton, SubtitleLabel, TableWidget
+from qfluentwidgets import ComboBox, LineEdit, PushButton, SubtitleLabel, TableWidget, ProgressBar
 
 
 def get_folders(folder_path):

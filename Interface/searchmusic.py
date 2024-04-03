@@ -10,13 +10,15 @@ from PyQt5.QtGui import QPalette, QMouseEvent
 from PyQt5.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, \
     QVBoxLayout, QLabel, QCompleter
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, SearchLineEdit, \
-    PrimaryPushButton, SpinBox, InfoBar, InfoBarPosition, InfoBarManager, InfoBarIcon, PushButton
+    PrimaryPushButton, SpinBox, InfoBar, InfoBarPosition, InfoBarManager, InfoBarIcon, PushButton, \
+    ProgressBar
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 import helper.config
 import win32api, win32con
 import os
 import requests
 from json import loads
+from mutagen.easyid3 import EasyID3
 
 try:
     if os.path.exists("api.json"):
@@ -58,7 +60,7 @@ class getlist(QThread):
 
 
 class downloading(QThread):
-    finished = pyqtSignal()
+    finished = pyqtSignal(str)
 
     @pyqtSlot()
     def run(self):
@@ -78,16 +80,20 @@ class downloading(QThread):
             win32api.MessageBox(0, '您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', '错误',
                                 win32con.MB_ICONWARNING)
             return 0
-        response = requests.get(url)
-        response.raise_for_status()
-        path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
-        path = os.path.abspath(path)
-        if os.path.exists(path):
-            return 0
-        with open(path, 'wb') as file:
-            file.write(response.content)
 
-        self.finished.emit()
+        response = requests.get(url, stream=True)
+        file_size = int(response.headers.get('content-length', 0))
+        chunk_size = file_size // 100
+        path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
+        with open(path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                f.write(chunk)
+                downloaded_bytes = f.tell()
+                progress = downloaded_bytes * 100 // file_size
+                if downloaded_bytes % chunk_size == 0:
+                    self.finished.emit(str(progress))
+
+        self.finished.emit(str(200))
 
 
 # class Worker(QObject):
@@ -97,7 +103,7 @@ class downloading(QThread):
 #     def do_work(self, text):
 #         if helper.config.Config.twitcard.value == True and is_english_and_characters(text):
 #             try:
-#                 self.key = AZMusicAPI.searchkey(text)
+#                 self.key = AZMusicAPI.searchkey(text)mn
 #             except:
 #                 self.key = []
 #                 return 0
@@ -144,6 +150,7 @@ def getad():
               "button": "（；´д｀）ゞ", "url": "https://azstudio.net.cn"}
         msg = ad
     return msg
+
 
 class get_ad(QThread):
     finished = pyqtSignal(dict)
@@ -230,6 +237,11 @@ class searchmusic(QWidget, QObject):
         self.primaryButton1 = PrimaryPushButton('下载', self)
         self.primaryButton1.released.connect(self.rundownload)
         self.primaryButton1.setEnabled(False)
+        self.ProgressBar = ProgressBar(self)
+        self.ProgressBar.setHidden(True)
+        self.ProgressBar.setMaximum(100)
+        self.ProgressBar.setFixedWidth(200)
+        self.layout1.addWidget(self.ProgressBar)
         self.layout1.addWidget(self.primaryButton1)
 
         self.layout1.addWidget(self.empty13)
@@ -338,6 +350,8 @@ class searchmusic(QWidget, QObject):
     @pyqtSlot()
     def rundownload(self):
         self.primaryButton1.setEnabled(False)
+        self.ProgressBar.setHidden(False)
+        self.ProgressBar.setValue(0)
         row = self.tableView.currentIndex().row()
         try:
             data = self.songdata[row]
@@ -408,23 +422,34 @@ class searchmusic(QWidget, QObject):
         self.tableView.resizeColumnsToContents()
         self.lworker.quit()
 
-    @pyqtSlot()
-    def download(self):
-        row = self.tableView.currentIndex().row()
-        try:
-            data = self.songdata[row]
-        except:
-            win32api.MessageBox(0, '您选中的行无数据', '错误', win32con.MB_ICONWARNING)
-        song_id = data["id"]
-        song = data["name"]
-        singer = data["artists"]
-        self.dworker.quit()
-        self.tableView.clearSelection()
-        self.primaryButton1.setEnabled(False)
-        path = "{}\\AZMusicDownload\\{} - {}.mp3".format(os.path.join(os.path.expanduser('~'), 'Music'), singer, song)
-        path = os.path.abspath(path)
-        text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
-        win32api.MessageBox(0, text, '音乐下载完成', win32con.MB_OK)
+    def download(self, progress):
+        if progress == "200":
+            self.ProgressBar.setValue(100)
+            row = self.tableView.currentIndex().row()
+            try:
+                data = self.songdata[row]
+            except:
+                win32api.MessageBox(0, '您选中的行无数据', '错误', win32con.MB_ICONWARNING)
+            song_id = data["id"]
+            song = data["name"]
+            singer = data["artists"]
+            album = data["album"]
+            self.dworker.quit()
+            self.tableView.clearSelection()
+            self.primaryButton1.setEnabled(False)
+            path = "{}\\AZMusicDownload\\{} - {}.mp3".format(os.path.join(os.path.expanduser('~'), 'Music'), singer,
+                                                             song)
+            path = os.path.abspath(path)
+            audio = EasyID3(path)
+            audio['title'] = song
+            audio['album'] = album
+            audio["artist"] = singer
+            audio.save()
+            text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
+            win32api.MessageBox(0, text, '音乐下载完成', win32con.MB_OK)
+            self.ProgressBar.setHidden(True)
+        else:
+            self.ProgressBar.setValue(int(progress))
 
 
 if __name__ == "__main__":

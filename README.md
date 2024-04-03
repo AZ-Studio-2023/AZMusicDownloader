@@ -49,7 +49,7 @@ _✨ 优雅地下载音乐✨_
 
 ### 使用条款
 
-[使用条款](https://github.com/AZ-Studio-2023/AZMusicDownloader2/blob/main/rule.html)
+[使用条款](https://github.com/AZ-Studio-2023/AZMusicDownloader/blob/main/rule.html)
 
 若您不同意本条款，请退出本页面。您使用本软件即代表您同意本条款。
 
@@ -72,5 +72,15 @@ _✨ 优雅地下载音乐✨_
   A:请检查您是否更改了默认音乐下载目录
 
 4.Q:如何使用我自己的API？
+
   A:在软件目录下找到```api.json```文件，将其中的api项修改为你自己的（格式：``` https://example.com/ ```）
-![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader2&type=Date)
+
+5.Q:为什么导入的歌单不完整？
+
+  A:由于技术限制，我们暂时只能获取到歌单内的前50首
+
+### 赞助
+
+<a href="https://afdian.net/a/chen_mo">爱发电</a>
+
+![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader&type=Date)

@@ -20,7 +20,7 @@ import datetime
 
 YEAR = int(datetime.date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.0.0 Fix"
+VERSION = "2.1.0 Update 1"
 HELP_URL = "https://azstudio.net.cn/"
 FEEDBACK_URL = "https://azstudio.net.cn/"
 RELEASE_URL = "https://azstudio.net.cn/"
@@ -70,7 +70,6 @@ class SettingInterface(ScrollArea):
         # setting label
 
         self.settingLabel = QLabel(self.tr("设置"), self)
-        #self.illustrate = SettingCardGroup(self.tr('所有设置项都需重启程序才能生效噢'), self.scrollWidget)
         # music folders
 
         self.personalGroup = SettingCardGroup(self.tr('主题'), self.scrollWidget)
