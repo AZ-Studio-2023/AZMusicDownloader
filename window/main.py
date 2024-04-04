@@ -21,7 +21,6 @@ from qfluentwidgets import (Action, NavigationBar, NavigationItemPosition, Navig
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
 from Interface.web import web
-from Interface.music import music
 from Interface.mymusic_beta import Demo
 from Interface.note import note
 from Interface.playlist import playlist
@@ -156,10 +155,7 @@ class Window(FramelessWindow):
 
     def initNavigation(self):
         self.addSubInterface(self.searchInterface, FIF.CARE_RIGHT_SOLID, '搜索下载')
-        if helper.config.Config.beta.value == True:
-            self.addSubInterface(Demo(), FIF.MUSIC_FOLDER, '我的音乐库')
-        else:
-            self.addSubInterface(music(), FIF.MUSIC_FOLDER, '我的音乐库')
+        self.addSubInterface(Demo(), FIF.MUSIC_FOLDER, '我的音乐库')
         if helper.config.Config.beta.value == True:
             self.addSubInterface(playlist(), FIF.EXPRESSIVE_INPUT_ENTRY, '歌单')
         else:
