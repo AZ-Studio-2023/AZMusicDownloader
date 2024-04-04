@@ -11,6 +11,10 @@ from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView,
 import subprocess
 import shlex
 
+musicpath = os.path.join(os.path.expanduser('~'), 'Music')
+path = "{}\\AZMusicDownload".format(musicpath)
+if not os.path.exists(path):
+    os.makedirs(path)
 def getallmusic():
     allmusic=[]
     musicpath = os.path.join(os.path.expanduser('~'), 'Music')
