@@ -7,8 +7,12 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5 import QtCore, QtWidgets
 import win32api, win32con
 import os
+from helper.resource import _init
+_init()
+from helper.resource import musicpath
 import requests
 from mutagen.easyid3 import EasyID3
+
 
 try:
     u = open("api.json", "r")
@@ -35,7 +39,6 @@ class downloading(QThread):
         song = data["song"]
         singer = data["singer"]
         url = AZMusicAPI.geturl(id=id, api=api)
-        musicpath = os.path.join(os.path.expanduser('~'), 'Music')
         if url == "Error 3":
             win32api.MessageBox(0, '这首歌曲无版权，暂不支持下载', '错误', win32con.MB_ICONWARNING)
             return 0
@@ -271,7 +274,6 @@ class playlist(QWidget):
             singer = str(self.TableWidget_2.item(row, 2).text())
             album = str(self.TableWidget_2.item(row, 3).text())
             try:
-                musicpath = os.path.join(os.path.expanduser('~'), 'Music')
                 if os.path.exists(musicpath + "\\AZMusicDownload") == False:
                     os.mkdir(musicpath + "\\AZMusicDownload")
             except:
@@ -293,7 +295,6 @@ class playlist(QWidget):
     def download(self, pro):
         if pro == "200":
             self.pro_bar.setValue(100)
-            musicpath = os.path.join(os.path.expanduser('~'), 'Music')
             u = open("log\\list_download.json", "r")
             data = json.loads(u.read())
             u.close()

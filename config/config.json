@@ -1,0 +1,36 @@
+{
+    "MainWindow": {
+        "adcard": true,
+        "MinimizeToTray": true,
+        "DpiScale": "Auto",
+        "EnableAcrylicBackground": false,
+        "hotcard": false,
+        "PlayBarColor": "#ff225c7f",
+        "RecentPlayNumbers": 300,
+        "twitcard": false
+    },
+    "Update": {
+        "CheckUpdateAtStartUp": true
+    },
+    "DesktopLyric": {
+        "Alignment": "Center",
+        "FontFamily": "Microsoft YaHei",
+        "FontSize": 50,
+        "HighlightColor": "#ff0099bc",
+        "StrokeColor": "#ff000000",
+        "StrokeSize": 5
+    },
+    "Folders": {
+        "Download": "F:/AzMusic/AZMusicDownloader/servers",
+        "LocalMusic": []
+    },
+    "Online": {
+        "MvQuality": "Full HD",
+        "PageSize": 30,
+        "SongQuality": "Standard quality"
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Auto"
+    }
+}

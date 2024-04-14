@@ -19,6 +19,9 @@ import os
 import requests
 from json import loads
 from mutagen.easyid3 import EasyID3
+from helper.resource import _init
+_init()
+from helper.resource import musicpath
 
 try:
     if os.path.exists("api.json"):
@@ -72,7 +75,6 @@ class downloading(QThread):
         song = data["song"]
         singer = data["singer"]
         url = AZMusicAPI.geturl(id=id, api=api)
-        musicpath = os.path.join(os.path.expanduser('~'), 'Music')
         if url == "Error 3":
             win32api.MessageBox(0, '这首歌曲无版权，暂不支持下载', '错误', win32con.MB_ICONWARNING)
             return 0
@@ -362,7 +364,6 @@ class searchmusic(QWidget, QObject):
         song = data["name"]
         singer = data["artists"]
         try:
-            musicpath = os.path.join(os.path.expanduser('~'), 'Music')
             if os.path.exists(musicpath + "\\AZMusicDownload") == False:
                 os.mkdir(musicpath + "\\AZMusicDownload")
         except:
@@ -437,8 +438,7 @@ class searchmusic(QWidget, QObject):
             self.dworker.quit()
             self.tableView.clearSelection()
             self.primaryButton1.setEnabled(False)
-            path = "{}\\AZMusicDownload\\{} - {}.mp3".format(os.path.join(os.path.expanduser('~'), 'Music'), singer,
-                                                             song)
+            path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
             path = os.path.abspath(path)
             audio = EasyID3(path)
             audio['title'] = song

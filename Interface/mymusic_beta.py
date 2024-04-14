@@ -10,14 +10,18 @@ import os
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, SearchLineEdit, PrimaryPushButton, SpinBox, InfoBar, InfoBarPosition, InfoBarManager, InfoBarIcon,PushButton
 import subprocess
 import shlex
+from helper.resource import _init
+_init()
+from helper.resource import musicpath
 
-musicpath = os.path.join(os.path.expanduser('~'), 'Music')
+#musicpath = os.path.join(os.path.expanduser('~'), 'Music')
+_init()
+
 path = "{}\\AZMusicDownload".format(musicpath)
 if not os.path.exists(path):
     os.makedirs(path)
 def getallmusic():
     allmusic=[]
-    musicpath = os.path.join(os.path.expanduser('~'), 'Music')
     path="{}\\AZMusicDownload".format(musicpath)
     for file_name in os.listdir(path):
         allmusic.append(file_name)
@@ -87,7 +91,6 @@ class Demo(QWidget):
     def openthemusic(self):
         row = self.listWidget.currentIndex().row() 
         name = self.data[row]
-        musicpath = os.path.join(os.path.expanduser('~'), 'Music')
         file_path = os.path.join(musicpath, 'AZMusicDownload', name)
         cmd = f'start "" "{file_path}"'
         subprocess.Popen(cmd, shell=True)

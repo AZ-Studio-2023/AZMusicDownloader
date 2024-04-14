@@ -20,7 +20,7 @@ import datetime
 
 YEAR = int(datetime.date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.1.0 Update 1"
+VERSION = "2.1.0 Update 2"
 HELP_URL = "https://azstudio.net.cn/"
 FEEDBACK_URL = "https://azstudio.net.cn/"
 RELEASE_URL = "https://azstudio.net.cn/"
