@@ -160,7 +160,7 @@ class Window(FramelessWindow):
             self.addSubInterface(playlist(), FIF.EXPRESSIVE_INPUT_ENTRY, '歌单')
         else:
             self.addSubInterface(playlist_tip(), FIF.EXPRESSIVE_INPUT_ENTRY, '歌单')
-        self.addSubInterface(web(), FIF.GLOBE, 'WEB管理', NavigationItemPosition.BOTTOM)
+        #self.addSubInterface(web(), FIF.GLOBE, 'WEB管理', NavigationItemPosition.BOTTOM)
         self.addSubInterface(note(), FIF.QUICK_NOTE, '更新日志', NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.settingsInterface, FIF.SETTING, '设置', NavigationItemPosition.BOTTOM)
 

@@ -18,13 +18,17 @@ class note(QWidget):
         # setTheme(Theme.DARK)
         self.setStyleSheet('start{background:white}')
 
-        content = '''1.修复了系统音乐文件夹修改后无法下载的问题
+        content = '''1.允许用户在设置中设置下载文件夹
+2.支持重置所有设置
+3.优化了音乐库界面
+4.音乐库支持了刷新文件
+5.去除了部分冗余代码
 鸣谢 & Thanks：
 ConiMite  辰墨 
         '''
         w = InfoBar(
             icon=InfoBarIcon.INFORMATION,
-            title='AZMusicDownloader v2.1.0 Update 2更新日志',
+            title='AZMusicDownloader v2.2.0 更新日志',
             content=content,
             orient=Qt.Vertical,    # vertical layout
             isClosable=False,

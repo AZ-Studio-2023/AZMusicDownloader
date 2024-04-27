@@ -8,7 +8,7 @@ from PyQt5.QtCore import QModelIndex, Qt
 from PyQt5.QtCore import QTimer, QThread
 from PyQt5.QtGui import QPalette, QMouseEvent
 from PyQt5.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, \
-    QVBoxLayout, QLabel, QCompleter
+    QVBoxLayout, QLabel, QCompleter, QHeaderView
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, SearchLineEdit, \
     PrimaryPushButton, SpinBox, InfoBar, InfoBarPosition, InfoBarManager, InfoBarIcon, PushButton, \
     ProgressBar
@@ -19,9 +19,7 @@ import os
 import requests
 from json import loads
 from mutagen.easyid3 import EasyID3
-from helper.resource import _init
-_init()
-from helper.resource import musicpath
+from helper.config import cfg
 
 try:
     if os.path.exists("api.json"):
@@ -67,6 +65,7 @@ class downloading(QThread):
 
     @pyqtSlot()
     def run(self):
+        musicpath = cfg.get(cfg.downloadFolder)
         u = open("log\\download.json", "r")
         data = json.loads(u.read())
         u.close()
@@ -86,7 +85,7 @@ class downloading(QThread):
         response = requests.get(url, stream=True)
         file_size = int(response.headers.get('content-length', 0))
         chunk_size = file_size // 100
-        path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
+        path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
         with open(path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=chunk_size):
                 f.write(chunk)
@@ -270,7 +269,7 @@ class searchmusic(QWidget, QObject):
         self.tableView.setHorizontalHeaderLabels(['ID', '歌曲名', '艺术家', '专辑'])
         self.tableView.resizeColumnsToContents()
         self.tableView.itemSelectionChanged.connect(self.openbutton)
-        # self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # self.tableView.setSortingEnabled(True)
         # self.tableView.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         # self.tableView.selectionChanged(self.nm)
@@ -351,6 +350,7 @@ class searchmusic(QWidget, QObject):
 
     @pyqtSlot()
     def rundownload(self):
+        musicpath = cfg.get(cfg.downloadFolder)
         self.primaryButton1.setEnabled(False)
         self.ProgressBar.setHidden(False)
         self.ProgressBar.setValue(0)
@@ -364,8 +364,8 @@ class searchmusic(QWidget, QObject):
         song = data["name"]
         singer = data["artists"]
         try:
-            if os.path.exists(musicpath + "\\AZMusicDownload") == False:
-                os.mkdir(musicpath + "\\AZMusicDownload")
+            if os.path.exists(musicpath) == False:
+                os.mkdir(musicpath)
         except:
             win32api.MessageBox(0, '音乐下载路径无法读取\创建失败', '错误', win32con.MB_ICONWARNING)
             return 0
@@ -424,6 +424,7 @@ class searchmusic(QWidget, QObject):
         self.lworker.quit()
 
     def download(self, progress):
+        musicpath = cfg.get(cfg.downloadFolder)
         if progress == "200":
             self.ProgressBar.setValue(100)
             row = self.tableView.currentIndex().row()
@@ -438,7 +439,7 @@ class searchmusic(QWidget, QObject):
             self.dworker.quit()
             self.tableView.clearSelection()
             self.primaryButton1.setEnabled(False)
-            path = "{}\\AZMusicDownload\\{} - {}.mp3".format(musicpath, singer, song)
+            path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
             path = os.path.abspath(path)
             audio = EasyID3(path)
             audio['title'] = song

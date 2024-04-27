@@ -1,5 +1,7 @@
 # coding:utf-8
 from enum import Enum
+import datetime
+import winreg
 
 from PyQt5.QtCore import Qt, QLocale
 from PyQt5.QtGui import QGuiApplication, QFont
@@ -49,56 +51,28 @@ class Config(QConfig):
     """ Config of application """
 
     # folders
-    musicFolders = ConfigItem(
-        "Folders", "LocalMusic", [], FolderListValidator())
+    reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
+    documents_path_value = winreg.QueryValueEx(reg_key, "My Music")
+    personalmusicpath = documents_path_value[0]
+    autopath = "{}\\AZMusicDownload".format(personalmusicpath)
     downloadFolder = ConfigItem(
-        "Folders", "Download", "servers", FolderValidator())
-
-    # online
-    onlineSongQuality = OptionsConfigItem(
-        "Online", "SongQuality", SongQuality.STANDARD, OptionsValidator(SongQuality), EnumSerializer(SongQuality))
-    onlinePageSize = RangeConfigItem(
-        "Online", "PageSize", 30, RangeValidator(0, 50))
-    onlineMvQuality = OptionsConfigItem(
-        "Online", "MvQuality", MvQuality.FULL_HD, OptionsValidator(MvQuality), EnumSerializer(MvQuality))
+        "Folders", "Download", autopath, FolderValidator())
 
     # main window
-    enableAcrylicBackground = ConfigItem(
-        "MainWindow", "EnableAcrylicBackground", False, BoolValidator())
     beta = ConfigItem(
-        "MainWindow", "MinimizeToTray", False, BoolValidator())
+        "MainWindow", "beta", False, BoolValidator(), restart=True)
     adcard = ConfigItem(
-        "MainWindow", "adcard", False, BoolValidator())
+        "MainWindow", "adcard", False, BoolValidator(), restart=True)
     twitcard = ConfigItem(
-        "MainWindow", "twitcard", False, BoolValidator())
+        "MainWindow", "twitcard", False, BoolValidator(), restart=True)
     hotcard = ConfigItem(
-        "MainWindow", "hotcard", False, BoolValidator())
+        "MainWindow", "hotcard", False, BoolValidator(), restart=True)
     playBarColor = ColorConfigItem("MainWindow", "PlayBarColor", "#225C7F")
     recentPlaysNumber = RangeConfigItem(
         "MainWindow", "RecentPlayNumbers", 300, RangeValidator(10, 300))
-    dpiScale = OptionsConfigItem(
-        "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
     # language = OptionsConfigItem(
     #     "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), LanguageSerializer(), restart=True)
-
-    # desktop lyric
-    deskLyricHighlightColor = ColorConfigItem(
-        "DesktopLyric", "HighlightColor", "#0099BC")
-    deskLyricFontSize = RangeConfigItem(
-        "DesktopLyric", "FontSize", 50, RangeValidator(15, 50))
-    deskLyricStrokeSize = RangeConfigItem(
-        "DesktopLyric", "StrokeSize", 5, RangeValidator(0, 20))
-    deskLyricStrokeColor = ColorConfigItem(
-        "DesktopLyric", "StrokeColor", Qt.black)
-    deskLyricFontFamily = ConfigItem(
-        "DesktopLyric", "FontFamily", "Microsoft YaHei")
-    deskLyricAlignment = OptionsConfigItem(
-        "DesktopLyric", "Alignment", "Center", OptionsValidator(["Center", "Left", "Right"]))
-
-    # software update
-    checkUpdateAtStartUp = ConfigItem(
-        "Update", "CheckUpdateAtStartUp", True, BoolValidator())
-
+    
     @property
     def desktopLyricFont(self):
         """ get the desktop lyric font """
@@ -113,13 +87,12 @@ class Config(QConfig):
         self.deskLyricFontSize.value = max(15, int(font.pointSize()*dpi/72))
         self.save()
 
-
-YEAR = 2023
-AUTHOR = "zhiyiYo"
-VERSION = __version__
-HELP_URL = "https://pyqt-fluent-widgets.readthedocs.io"
-FEEDBACK_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/issues"
-RELEASE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/releases/latest"
+YEAR = int(datetime.date.today().year)
+AUTHOR = "AZ Studio"
+VERSION = "2.2.0"
+HELP_URL = "https://azstudio.net.cn/"
+FEEDBACK_URL = "https://azstudio.net.cn/"
+RELEASE_URL = "https://azstudio.net.cn/"
 
 
 cfg = Config()
