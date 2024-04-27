@@ -20,7 +20,7 @@ from qfluentwidgets import (Action, NavigationBar, NavigationItemPosition, Navig
                             PopUpAniStackedWidget, DropDownPushButton, InfoBar, InfoBarPosition, InfoBarManager, PushButton)
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
-from Interface.web import web
+#from Interface.web import web
 from Interface.mymusic_beta import Demo
 from Interface.note import note
 from Interface.playlist import playlist
@@ -47,7 +47,7 @@ class StackedWidget(QFrame):
         super().__init__(parent=parent)
         self.hBoxLayout = QHBoxLayout(self)
         self.view = PopUpAniStackedWidget(self)
-        self.webInterface = web()
+        #self.webInterface = web()
         self.hBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.hBoxLayout.addWidget(self.view)
 
