@@ -1,77 +1,33 @@
 # coding:utf-8
-import json
-import random
-import requests
-
-from helper.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard, InfoBarPosition,
-                            OptionsSettingCard, RangeSettingCard, PushSettingCard, InfoBarIcon, PushButton,
-                            ColorSettingCard, HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, InfoBar, CustomColorSettingCard,
-                            setTheme, setThemeColor, isDarkTheme)
+from helper.config import cfg
+from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, CustomColorSettingCard,
+                            OptionsSettingCard, PushSettingCard, setTheme, isDarkTheme,
+                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea, PushButton,
+                            ComboBoxSettingCard, ExpandLayout, Theme, InfoBar, FlyoutView, Flyout)
 from qfluentwidgets import FluentIcon as FIF
-from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths, QThread, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtWidgets import QWidget, QLabel, QFontDialog, QFileDialog
-from json import loads
-import webbrowser
-import datetime, winreg
-from helper.config import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, RELEASE_URL
-from os import remove
-
-reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
-documents_path_value = winreg.QueryValueEx(reg_key, "My Music")
-personalmusicpath = documents_path_value[0]
-autopath = "{}\\AZMusicDownload".format(personalmusicpath)
-
-def getad():
-    url = "https://json.zenglingkun.cn/ad/music/setting.json"
-    try:
-        ad = requests.get(url).text
-        data = loads(ad)
-        msg = data
-    except:
-        try:
-            o = open("resource/hitokoto.json", "r")
-            hit_data = json.loads(o.read())["hitokoto"]
-            o.close()
-            poem = hit_data[random.randint(0, len(hit_data) - 1)]
-        except:
-            poem = "海内存知己，天涯若比邻"
-        ad = {"title": "(⊙o⊙)？", "text": "呀！找不到广告了 ＞﹏＜ 请检查您的网络连接\n{}".format(poem), "time": 30000,
-              "button": "（；´д｀）ゞ", "url": "https://azstudio.net.cn"}
-        msg = ad
-    return msg
-
-class get_ad(QThread):
-    finished = pyqtSignal(dict)
-
-    @pyqtSlot()
-    def run(self):
-        data = getad()
-        self.finished.emit(data)
+from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
+from sys import platform, getwindowsversion
+from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, RELEASE_URL, autopath, AZ_URL
+from helper.inital import delfin
 
 class SettingInterface(ScrollArea):
-    """ Setting interface """
-    def openlk(self):
-        webbrowser.open_new_tab(self.ad_list("url"))
-    checkUpdateSig = pyqtSignal()
     musicFoldersChanged = pyqtSignal(list)
     acrylicEnableChanged = pyqtSignal(bool)
     downloadFolderChanged = pyqtSignal(str)
     minimizeToTrayChanged = pyqtSignal(bool)
+    micaEnableChanged = pyqtSignal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.scrollWidget = QWidget()
         self.expandLayout = ExpandLayout(self.scrollWidget)
         self.setObjectName('settings')
-        # setting label
-
         self.settingLabel = QLabel(self.tr("设置"), self)
-        # music folders
-
-        self.personalGroup = SettingCardGroup(self.tr('主题'), self.scrollWidget)
+        
+        # Personalize
+        self.personalGroup = SettingCardGroup(self.tr('个性化'), self.scrollWidget)
         self.themeCard = OptionsSettingCard(
             cfg.themeMode,
             FIF.BRUSH,
@@ -90,7 +46,23 @@ class SettingInterface(ScrollArea):
             self.tr('更改应用程序的主题颜色'),
             self.personalGroup
         )
+        self.languageCard = ComboBoxSettingCard(
+            cfg.language,
+            FIF.LANGUAGE,
+            self.tr('Language'),
+            self.tr('Set your preferred language for UI'),
+            texts=['简体中文', '繁體中文', 'English', self.tr('Use system setting')],
+            parent=self.personalGroup
+        )
+        self.micaCard = SwitchSettingCard(
+            FIF.TRANSPARENT,
+            self.tr('Mica effect'),
+            self.tr('Apply semi transparent to windows and surfaces'),
+            cfg.micaEnabled,
+            self.personalGroup
+        )
 
+        # Folders
         self.DownloadSettings = SettingCardGroup(self.tr("下载设置"), self.scrollWidget)
         self.downloadFolderCard = PushSettingCard(
             self.tr('选择目录'),
@@ -107,6 +79,7 @@ class SettingInterface(ScrollArea):
             self.DownloadSettings
         )
 
+        # Application
         self.appGroup = SettingCardGroup(self.tr('应用程序设置'), self.scrollWidget)
         self.beta = SwitchSettingCard(
             FIF.DEVELOPER_TOOLS,
@@ -130,6 +103,7 @@ class SettingInterface(ScrollArea):
             self.appGroup
         )
 
+        # Search
         self.searchGroup = SettingCardGroup(self.tr('搜索设置'), self.scrollWidget)
         self.twitCard = SwitchSettingCard(
             FIF.TAG,
@@ -147,7 +121,7 @@ class SettingInterface(ScrollArea):
             parent=self.searchGroup
         )
 
-        # application
+        # About
         self.aboutGroup = SettingCardGroup(self.tr('关于'), self.scrollWidget)
         self.helpCard = HyperlinkCard(
             HELP_URL,
@@ -165,17 +139,16 @@ class SettingInterface(ScrollArea):
             self.aboutGroup
         )
         self.aboutCard = PrimaryPushSettingCard(
-            self.tr('AZ Studio'),
+            self.tr('Changelog'),
             FIF.INFO,
-            self.tr('关于'),
+            self.tr('更新日志'),
             '© ' + self.tr(' ') + f" {YEAR}, {AUTHOR}. " +
             self.tr('Version') + f" {VERSION}",
             self.aboutGroup
         )
-        self.adw = get_ad()
-        if cfg.adcard.value == False:
-            self.adw.start()
-        self.adw.finished.connect(self.show_ad)
+        
+        self.languageCard.setEnabled(False)
+        self.micaCard.setEnabled(platform == 'win32' and getwindowsversion().build >= 22000)
         self.__initWidget()
 
 
@@ -202,6 +175,8 @@ class SettingInterface(ScrollArea):
 
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
+        self.personalGroup.addSettingCard(self.languageCard)
+        self.personalGroup.addSettingCard(self.micaCard)
 
         self.appGroup.addSettingCard(self.beta)
         self.appGroup.addSettingCard(self.adCard)
@@ -217,10 +192,10 @@ class SettingInterface(ScrollArea):
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(60, 10, 60, 0)
-        self.expandLayout.addWidget(self.personalGroup)
         self.expandLayout.addWidget(self.DownloadSettings)
-        self.expandLayout.addWidget(self.appGroup)
         self.expandLayout.addWidget(self.searchGroup)
+        self.expandLayout.addWidget(self.personalGroup)
+        self.expandLayout.addWidget(self.appGroup)
         self.expandLayout.addWidget(self.aboutGroup)
 
     def __setQss(self):
@@ -236,7 +211,7 @@ class SettingInterface(ScrollArea):
         """ show restart tooltip """
         InfoBar.warning(
             '',
-            self.tr('Configuration takes effect after restart'),
+            self.tr('设置需要重启程序后生效'),
             parent=self.window()
         )
 
@@ -254,16 +229,8 @@ class SettingInterface(ScrollArea):
         self.downloadFolderCard.setContent(cfg.get(cfg.downloadFolder))
         
     def __backtoinitClicked(self):
-        try:
-            remove("config/config.json")
-            self.__showRestartTooltip()
-            self.backtoinit.setEnabled(False)
-        except:
-            InfoBar.error(
-            '',
-            self.tr('Nothing should be changed.'),
-            parent=self.window()
-        )
+        delfin()
+        self.__showRestartTooltip()
 
     def __onThemeChanged(self, theme: Theme):
         """ theme changed slot """
@@ -272,39 +239,50 @@ class SettingInterface(ScrollArea):
 
         # chang the theme of setting interface
         self.__setQss()
+        
+    def opengithub(self):
+        QDesktopServices.openUrl(QUrl(RELEASE_URL))
+    def openaz(self):
+        QDesktopServices.openUrl(QUrl(AZ_URL))
+        
+    def __changelog(self):
+        view = FlyoutView(
+            title='AZMusicDownloader V2.3.0更新日志 ',
+            content="1.将一堆配置文件移动至用户AppData文件夹中\n2、修改设置配置文件的写法，使文件可读性提高\n3、beta实验功能关闭时，将自动隐藏beta功能的入口\n4"
+                    "、将更新日志合并到设置中，增加跳转GitHub按钮\n5、取消了设置页面的广告\n6、将窗口的FramelessWindow改为FluentWindow，在Windows11下支持Mica"
+                    "\n7、修改启动图\n8、增加多语言设置（当前不可用）\n9、增加全局异常捕获（可能不起作用）\n10、优化代码，使代码文件体积大幅度缩小",
+            #image='resource/splash.png',
+            isClosable=True
+        )
+        
+        # add button to view
+        button1 = PushButton(FIF.GITHUB, 'GitHub')
+        button1.setFixedWidth(120)
+        button1.clicked.connect(self.opengithub)
+        view.addWidget(button1, align=Qt.AlignRight)
+        
+        button2 = PushButton('AZ Studio')
+        button2.setFixedWidth(120)
+        button2.clicked.connect(self.openaz)
+        view.addWidget(button2, align=Qt.AlignRight)
+
+        # adjust layout (optional)
+        view.widgetLayout.insertSpacing(1, 5)
+        view.widgetLayout.addSpacing(5)
+
+        # show view
+        w = Flyout.make(view, self.aboutCard, self)
+        view.closed.connect(w.close)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(self.__showRestartTooltip)
         cfg.themeChanged.connect(self.__onThemeChanged)
+        self.micaCard.checkedChanged.connect(self.micaEnableChanged)
 
         self.downloadFolderCard.clicked.connect(self.__onDownloadFolderCardClicked)
         self.FolderAuto.clicked.connect(self.__FolederAutoCardClicked)
         self.backtoinit.clicked.connect(self.__backtoinitClicked)
-        
-
-        # main panel
-        self.beta.checkedChanged.connect(
-            self.minimizeToTrayChanged)
-
-        # about
-        self.aboutCard.clicked.connect(self.checkUpdateSig)
-        self.feedbackCard.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
-    def show_ad(self, ad_v):
-        self.ad_list = ad_v
-        self.ad = InfoBar(
-            icon=InfoBarIcon.INFORMATION,
-            title=self.ad_list["title"],
-            content=self.ad_list["text"],
-            orient=Qt.Vertical,  # vertical layout
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM_RIGHT,
-            duration=self.ad_list["time"],
-            parent=self
-        )
-        self.s = PushButton(self.ad_list["button"])
-        self.s.clicked.connect(self.openlk)
-        self.ad.addWidget(self.s)
-        self.ad.show()
-        self.adw.quit()
+        self.beta.checkedChanged.connect(self.minimizeToTrayChanged)
+        self.aboutCard.clicked.connect(self.__changelog)
+        self.feedbackCard.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))

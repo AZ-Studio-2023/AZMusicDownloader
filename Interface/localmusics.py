@@ -2,19 +2,18 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QListWidgetItem, QListWidget, QWidget, QHBoxLayout, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import ListView, setTheme, Theme, ListWidget
+from qfluentwidgets import ListWidget
 import os
 from qfluentwidgets import ToolButton, PrimaryToolButton
 from qfluentwidgets import FluentIcon as FIF
 import subprocess
 from helper.config import cfg
+from helper.inital import mkf
 
 path = cfg.get(cfg.downloadFolder)
-if not os.path.exists(path):
-    os.makedirs(path)
+mkf()
 def get_all_music():
     all_music = []
     path = cfg.get(cfg.downloadFolder)
@@ -23,12 +22,12 @@ def get_all_music():
             all_music.append(file_name)
     return all_music
 
-class Demo(QWidget):
+class localmusics(QWidget):
 
     def __init__(self):
         super().__init__()
         # setTheme(Theme.DARK)
-        self.setObjectName("Demo")
+        self.setObjectName("localmusics")
         self.hBoxLayout = QHBoxLayout(self)
         self.vBoxLayout = QVBoxLayout(self)
         self.listWidget = ListWidget(self)
@@ -41,8 +40,7 @@ class Demo(QWidget):
             # item.setIcon(QIcon(':/qfluentwidgets/images/logo.png'))
             # item.setCheckState(Qt.Unchecked)
             self.listWidget.addItem(item)
-            
-        self.setStyleSheet("Demo{background: rgb(249, 249, 249)} ")
+        
         self.hBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.listWidget.clicked.connect(self.openbutton)
         self.resize(300, 400)
@@ -92,16 +90,3 @@ class Demo(QWidget):
         for stand in stands:
             item = QListWidgetItem(stand)
             self.listWidget.addItem(item)
-
-        
-if __name__ == "__main__":
-    # enable dpi scale
-    QApplication.setHighDpiScaleFactorRoundingPolicy(
-        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
-    app = QApplication(sys.argv)
-    w = Demo()
-    w.show()
-    app.exec()

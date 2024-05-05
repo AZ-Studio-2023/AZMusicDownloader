@@ -11,11 +11,12 @@ _✨ 优雅地下载音乐✨_
 <p align="center">
   <img src="https://img.shields.io/badge/license-Apache_2.0-orange" alt="license">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Windows-Only-pink?logo=windows" alt="WinOnly">
   <a href="https://pypi.org/project/AZMusicAPI/">
     <img src="https://img.shields.io/badge/AZMusicAPI-1.4.3-green" alt="AZMusicAPI">
   </a>
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
-    <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-1.1.9-red" alt="PyQt-Fluent-Widgets">
+    <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-red" alt="PyQt-Fluent-Widgets">
   </a>
   <a href="https://qm.qq.com/cgi-bin/qm/qr?k=dC63QHGh-kNApdDtxISAg3Adpg84gWCd&jump_from=webapi&authKey=xuvI2AhU2s5dLFtxjHjbg8Hu2y9NKDy3lFpjaYscDWtxeSDIXVUYWw0QN/+hgAUI">
     <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-808738069-yellow" alt="qq group">
@@ -32,30 +33,13 @@ _✨ 优雅地下载音乐✨_
 
 <a href="https://afdian.net/a/chen_mo">爱发电</a>
 
-### 使用
+### 文档
 
-- 使用源代码运行
-
-1.下载源代码至无须管理员权限的目录
-
-2.安装依赖库：
-```pip install -r requirements.txt```
-
-3.运行
-
-运行```MusicDownloader.py```
-
-- 使用 [发行版](https://github.com/AZ-Studio-2023/AZMusicDownloader/releases)
-
-> 您可以选择使用安装版(exe程序) 或 绿色版(zip压缩包)
-> 
-> ⚠️注意：若您将本程序安装/放置在需要管理员权限的目录，则需要以**管理员方式运行**,否则将会无法正常运行。
-
-
+<a href="https://md.azprod.cn/docs">点我跳转</a>
 
 ### 使用条款
 
-[使用条款](https://github.com/AZ-Studio-2023/AZMusicDownloader/blob/main/rule.html)
+[使用条款](https://md.azprod.cn/docs/rule)
 
 若您不同意本条款，请退出本页面。您使用本软件即代表您同意本条款。
 
@@ -63,27 +47,14 @@ _✨ 优雅地下载音乐✨_
 
 > 本项目部分功能使用了网易云音乐的第三方 API 服务，仅供个人学习研究使用，禁止用于商业及非法用途。同时，本项目开发者承诺：严格遵守相关法律法规和网易云音乐 API 使用协议，不会利用本项目进行任何违法活动。 如因使用本项目而引起的任何纠纷或责任，均由使用者自行承担。本项目开发者不承担任何因使用本项目而导致的任何直接或间接责任，并保留追究使用者违法行为的权利。请使用者在使用本项目时遵守相关法律法规，请勿将本项目用于任何商业及非法用途。如有违反，一切后果由使用者自负。 同时，使用者应该自行承担因使用本项目而带来的风险和责任。本项目开发者不对本项目所提供的服务和内容做出任何保证，感谢您的理解。
 
-### Q&A
+### TODO：
 
-1.Q:为什么我无法导入歌单？
+1、支持多语言
 
-  A:需要使用网易云音乐的用户id或歌单id，请检查是否正确
+2、支持自动获取Windows主题颜色
 
-2.Q:为什么我没有歌单功能？
-
-  A:请在设置中开启Beta实验功能
-
-3.Q:为什么我下载不了歌曲？
-
-  A:请检查您是否更改了默认音乐下载目录（V2.1.0 Update 1及之前）
-
-  4.Q:如何使用我自己的API？
-
-  A:在软件目录下找到```api.json```文件，将其中的api项修改为你自己的（格式：``` https://example.com/ ```）
-
-5.Q:为什么导入的歌单不完整？
-
-  A:由于技术限制，我们暂时只能获取到歌单内的前50首
-
+3、重构所有页面的Layout
 
 ![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader&type=Date)
+![Alt](https://repobeats.axiom.co/api/embed/c3811b9d467134f4fe12b9dd9e1c3f72030e2e7f.svg "Repobeats analytics image")
+
