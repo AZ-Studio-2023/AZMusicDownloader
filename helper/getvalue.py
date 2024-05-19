@@ -26,8 +26,8 @@ adurl = "https://json.zenglingkun.cn/ad/music/home.json"
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.3.0"
+VERSION = "2.4.0"
 HELP_URL = "https://md.azprod.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.3.0"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.4.0"
 AZ_URL = "https://azstudio.net.cn/"

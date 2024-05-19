@@ -247,10 +247,8 @@ class SettingInterface(ScrollArea):
         
     def __changelog(self):
         view = FlyoutView(
-            title='AZMusicDownloader V2.3.0更新日志 ',
-            content="1.将一堆配置文件移动至用户AppData文件夹中\n2、修改设置配置文件的写法，使文件可读性提高\n3、beta实验功能关闭时，将自动隐藏beta功能的入口\n4"
-                    "、将更新日志合并到设置中，增加跳转GitHub按钮\n5、取消了设置页面的广告\n6、将窗口的FramelessWindow改为FluentWindow，在Windows11下支持Mica"
-                    "\n7、修改启动图\n8、增加多语言设置（当前不可用）\n9、增加全局异常捕获（可能不起作用）\n10、优化代码，使代码文件体积大幅度缩小",
+            title='AZMusicDownloader V2.4.0更新日志 ',
+            content="1.开发插件功能，使得程序扩展性提高。（需打开Beta实验功能以体验）\n2.增加启动日志（使用源代码运行时可见）",
             #image='resource/splash.png',
             isClosable=True
         )

@@ -47,5 +47,5 @@ if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion(
     splash.finish(w)
     app.exec_()
 else:
-    text = "不支持的操作系统：" + sys.platform()
+    text = "不支持的操作系统：" + sys.platform
     MessageBox(0, text, "软件启动错误", MB_ICONHAND)

@@ -1,0 +1,6 @@
+{
+  "icon": "resource/logo.png",
+  "name": "测试插件",
+  "desc": "这是一个插件样例",
+  "show_icon": "FIF.MUSIC_FOLDER"
+}
