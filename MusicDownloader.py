@@ -28,8 +28,8 @@ if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion(
     splash.show()
     screen_resolution = app.desktop().screenGeometry()
     screen_width, screen_height = screen_resolution.width(), screen_resolution.height()
-    splash_width = 283
-    splash_height = 276
+    splash_width = 260
+    splash_height = 260
     splash.setFixedSize(splash_width, splash_height)
     splash.move((screen_width - splash_width) // 2, (screen_height - splash_height) // 2)
     

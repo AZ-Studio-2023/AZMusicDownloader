@@ -88,11 +88,11 @@ class SettingInterface(ScrollArea):
             configItem=cfg.beta,
             parent=self.appGroup
         )
-        self.adCard = SwitchSettingCard(
-            FIF.CALORIES,
-            self.tr('关闭广告'),
-            self.tr('这是我们目前唯一的收入来源，求求别关闭qwq，如果真的要关闭的话，得重启后才能生效'),
-            configItem=cfg.adcard,
+        self.Update_Card = SwitchSettingCard(
+            FIF.FLAG,
+            self.tr('禁用更新检查'),
+            self.tr('开启后启动将不会检查版本更新'),
+            configItem=cfg.update_card,
             parent=self.appGroup
         )
         self.backtoinit = PushSettingCard(
@@ -179,7 +179,7 @@ class SettingInterface(ScrollArea):
         self.personalGroup.addSettingCard(self.micaCard)
 
         self.appGroup.addSettingCard(self.beta)
-        self.appGroup.addSettingCard(self.adCard)
+        self.appGroup.addSettingCard(self.Update_Card)
         self.appGroup.addSettingCard(self.backtoinit)
 
         self.aboutGroup.addSettingCard(self.helpCard)
@@ -247,8 +247,8 @@ class SettingInterface(ScrollArea):
         
     def __changelog(self):
         view = FlyoutView(
-            title='AZMusicDownloader V2.4.0更新日志 ',
-            content="1.开发插件功能，使得程序扩展性提高。（需打开Beta实验功能以体验）\n2.增加启动日志（使用源代码运行时可见）",
+            title='AZMusicDownloader V2.4.2更新日志 ',
+            content="1.添加版本检查功能，重大更新不再错过\n2.删除了仅存的搜索页广告，当前全局无广告！\n3.为AZMusicDownloader制作LOGO，全局替换新LOGO",
             #image='resource/splash.png',
             isClosable=True
         )

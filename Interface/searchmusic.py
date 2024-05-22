@@ -13,7 +13,7 @@ import requests, os
 from json import loads
 from mutagen.easyid3 import EasyID3
 from helper.config import cfg
-from helper.getvalue import apipath, download_log, search_log, autoapi, adurl
+from helper.getvalue import apipath, download_log, search_log, autoapi, upurl, VERSION
 from helper.inital import mkf
 from helper.flyoutmsg import dlsuc, dlerr, dlwar
 
@@ -117,8 +117,8 @@ class CustomTableItemDelegate(TableItemDelegate):
             option.palette.setColor(QPalette.HighlightedText, Qt.red)
 
 
-def getad():
-    url = adurl
+def getup():
+    url = upurl
     try:
         ad = requests.get(url).text
         data = loads(ad)
@@ -131,18 +131,18 @@ def getad():
             poem = hit_data[random.randint(0, len(hit_data) - 1)]
         except:
             poem = "海内存知己，天涯若比邻"
-        ad = {"title": "(⊙o⊙)？", "text": "呀！找不到广告了 ＞﹏＜ 请检查您的网络连接\n{}".format(poem), "time": 30000,
+        ad = {"title": "(⊙o⊙)？", "text": "呀！获取不到更新数据了 ＞﹏＜ 请检查您的网络连接\n{}".format(poem), "time": 20000,
               "button": "（；´д｀）ゞ", "url": "https://azstudio.net.cn"}
         msg = ad
     return msg
 
 
-class get_ad(QThread):
+class get_update(QThread):
     finished = pyqtSignal(dict)
 
     @pyqtSlot()
     def run(self):
-        data = getad()
+        data = getup()
         self.finished.emit(data)
 
 
@@ -214,12 +214,12 @@ class searchmusic(QWidget, QObject):
 
         self.dworker = downloading()
 
-        self.adworker = get_ad()
+        self.upworker = get_update()
 
         # self.worker.finished.connect(self.on_worker_finished)
         self.lworker.finished.connect(self.search)
         self.dworker.finished.connect(self.download)
-        self.adworker.finished.connect(self.showad)
+        self.upworker.finished.connect(self.showup)
         self.primaryButton1 = PrimaryPushButton('下载', self)
         self.primaryButton1.released.connect(self.rundownload)
         self.primaryButton1.setEnabled(False)
@@ -277,8 +277,8 @@ class searchmusic(QWidget, QObject):
         self.hBoxLayout.addWidget(self.empty5)
         self.hBoxLayout.addWidget(self.empty6)
         self.resize(635, 700)
-        if helper.config.Config.adcard.value == False:
-            self.adworker.start()
+        if helper.config.Config.update_card.value == False:
+            self.upworker.start()
         if helper.config.cfg.hotcard.value:
             try:
                 data = requests.get(api + "search/hot").json()["result"]["hots"]
@@ -293,29 +293,39 @@ class searchmusic(QWidget, QObject):
                 pass
 
     def openlk(self):
-        webbrowser.open_new_tab(self.ad["url"])
+        webbrowser.open_new_tab("https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/latest")
 
     def openbutton(self):
         self.primaryButton1.setEnabled(True)
 
-    def showad(self, addata):
-        self.ad = addata
-        w = InfoBar(
-            icon=InfoBarIcon.INFORMATION,
-            title=self.ad["title"],
-            content=self.ad["text"],
-            orient=Qt.Vertical,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM_RIGHT,
-            duration=self.ad["time"],
-            parent=self
-        )
+    def showup(self, updata):
+        self.up = updata
+        if not VERSION == self.up["latest"]:
+            # 等级可为：normal（普通的），important（重要的）
+            if self.up["level"] == "normal":
+                text = "我们检测到了新的版本，版本号：{}\n本次更新为日常版本迭代，更新了新功能，可选择性进行更新。".format(str(self.up["latest"]))
+                dlwar("检测到有新版本 {} ，本次更新为日常版本迭代，可选择进行更新。".format(str(self.up["latest"])), self, title = "更新提示", show_time = self.up["flag_time"])
+            elif self.up["level"] == "important":
+                text = "我们检测到了新的版本，版本号：{}\n本次更新为重要版本迭代，修复了Bug，更新了新功能，强烈建议进行更新。".format(str(self.up["latest"]))
+                dlerr("检测到有新版本 {} ，本次更新为重要版本迭代，强烈建议进行更新。".format(str(self.up["latest"])), self, title = "更新提示", show_time = self.up["flag_time"])
+            w = InfoBar(
+                icon=InfoBarIcon.INFORMATION,
+                title="有新版本可用",
+                content=text,
+                orient=Qt.Vertical,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_RIGHT,
+                duration=self.up["time"],
+                parent=self
+            )
 
-        self.s = PushButton(self.ad["button"])
-        w.addWidget(self.s)
-        self.s.clicked.connect(self.openlk)
-        w.show()
-        self.adworker.quit()
+            self.s = PushButton("去更新")
+            w.addWidget(self.s)
+            self.s.clicked.connect(self.openlk)
+            w.show()
+        else:
+            dlsuc("您使用的版本是最新版本", self, title="恭喜", show_time=5000)
+        self.upworker.quit()
 
     @pyqtSlot()
     def searchstart(self):

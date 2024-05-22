@@ -33,8 +33,8 @@ class Config(QConfig):
     # Application
     beta = ConfigItem(
         "Application", "beta", False, BoolValidator(), restart=True)
-    adcard = ConfigItem(
-        "Application", "adcard", False, BoolValidator(), restart=True)
+    update_card = ConfigItem(
+        "Application", "update_card", False, BoolValidator(), restart=True)
     
     # Search
     twitcard = ConfigItem(

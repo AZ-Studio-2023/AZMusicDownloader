@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://azstudio.net.cn/">
-    <img src="https://s11.ax1x.com/2024/02/05/pFlXDts.png" width="200" height="200" alt="AZ Studio">
+    <img src="https://s21.ax1x.com/2024/05/22/pkM7IRs.png" width="200" height="200" alt="AZ Studio">
   </a>
 
 # AZ音乐下载器 | AZMusicDownloader
