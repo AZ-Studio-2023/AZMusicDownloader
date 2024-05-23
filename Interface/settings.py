@@ -248,7 +248,8 @@ class SettingInterface(ScrollArea):
     def __changelog(self):
         view = FlyoutView(
             title='AZMusicDownloader V2.4.2更新日志 ',
-            content="1.添加版本检查功能，重大更新不再错过\n2.删除了仅存的搜索页广告，当前全局无广告！\n3.为AZMusicDownloader制作LOGO，全局替换新LOGO",
+            content="1.添加版本检查功能，重大更新不再错过\n2.删除了仅存的搜索页广告，当前全局无广告！\n3.为AZMusicDownloader制作LOGO，全局替换新LOGO\n4"
+                    ".修复无网络连接进入时报错(Fix 1)\n5.优化了版本检查(Fix 1)",
             #image='resource/splash.png',
             isClosable=True
         )

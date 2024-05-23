@@ -21,13 +21,15 @@ try:
     u = open(apipath, "r")
     data = json.loads(u.read())
     api = data["api"]
-    u.close()   
+    u.close()
 except:
     api = autoapi
 mkf()
 
+
 def is_english_and_characters(input_string):
     return all(char.isalpha() or not char.isspace() for char in input_string)
+
 
 class getlist(QThread):
     finished = pyqtSignal()
@@ -63,7 +65,7 @@ class downloading(QThread):
             dlerr(content='这首歌曲无版权，暂不支持下载', parent=self)
             return 0
         elif url == "NetworkError":
-            dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent = self)
+            dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent=self)
             return 0
 
         response = requests.get(url, stream=True)
@@ -128,11 +130,12 @@ def getup():
             o = open("resource/hitokoto.json", "r")
             hit_data = json.loads(o.read())["hitokoto"]
             o.close()
-            poem = hit_data[random.randint(0, len(hit_data) - 1)]
+            poem = "在等待的过程中，来读句古诗词吧：" + hit_data[random.randint(0, len(hit_data) - 1)]
         except:
-            poem = "海内存知己，天涯若比邻"
-        ad = {"title": "(⊙o⊙)？", "text": "呀！获取不到更新数据了 ＞﹏＜ 请检查您的网络连接\n{}".format(poem), "time": 20000,
-              "button": "（；´д｀）ゞ", "url": "https://azstudio.net.cn"}
+            poem = "在等待的过程中，来读句古诗词吧：海内存知己，天涯若比邻。"
+        ad = {"latest": "0.0.0", "title": "(⊙o⊙)？",
+              "text": "呀！获取不到更新数据了 ＞﹏＜ 请检查您的网络连接\n{}".format(poem), "time": 200000,
+              "button": "（；´д｀）ゞ", "link": "https://azstudio.net.cn"}
         msg = ad
     return msg
 
@@ -152,7 +155,7 @@ class searchmusic(QWidget, QObject):
         super().__init__()
         # setTheme(Theme.DARK)
         self.setObjectName("searchmusic")
-        
+
         self.hBoxLayout = QHBoxLayout(self)
         self.layout1 = QVBoxLayout(self)
 
@@ -293,21 +296,35 @@ class searchmusic(QWidget, QObject):
                 pass
 
     def openlk(self):
-        webbrowser.open_new_tab("https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/latest")
+        webbrowser.open_new_tab(self.up["link"])
 
     def openbutton(self):
         self.primaryButton1.setEnabled(True)
 
     def showup(self, updata):
         self.up = updata
-        if not VERSION == self.up["latest"]:
-            # 等级可为：normal（普通的），important（重要的）
+        if not VERSION == self.up["latest"] and self.up["latest"] != "0.0.0":
+            # 等级可为：normal（普通的），important（重要的），fix（修复版）
             if self.up["level"] == "normal":
-                text = "我们检测到了新的版本，版本号：{}\n本次更新为日常版本迭代，更新了新功能，可选择性进行更新。".format(str(self.up["latest"]))
-                dlwar("检测到有新版本 {} ，本次更新为日常版本迭代，可选择进行更新。".format(str(self.up["latest"])), self, title = "更新提示", show_time = self.up["flag_time"])
+                text = "我们检测到了新的版本，版本号：{}\n本次更新为日常版本迭代，更新了新功能，可选择性进行更新。".format(
+                    str(self.up["latest"]))
+                dlwar("检测到有新版本 {} ，本次更新为日常版本迭代，可选择进行更新。".format(str(self.up["latest"])), self,
+                      title="更新提示", show_time=self.up["flag_time"])
             elif self.up["level"] == "important":
-                text = "我们检测到了新的版本，版本号：{}\n本次更新为重要版本迭代，修复了Bug，更新了新功能，强烈建议进行更新。".format(str(self.up["latest"]))
-                dlerr("检测到有新版本 {} ，本次更新为重要版本迭代，强烈建议进行更新。".format(str(self.up["latest"])), self, title = "更新提示", show_time = self.up["flag_time"])
+                text = "我们检测到了新的版本，版本号：{}\n本次更新为重要版本迭代，修复了Bug，更新了新功能，强烈建议进行更新。".format(
+                    str(self.up["latest"]))
+                dlerr("检测到有新版本 {} ，本次更新为重要版本迭代，强烈建议进行更新。".format(str(self.up["latest"])),
+                      self, title="更新提示", show_time=self.up["flag_time"])
+            elif self.up["level"] == "fix":
+                text = "我们检测到了新的版本，版本号：{}\n本次更新为Bug修复版本，修复了重大Bug，强烈建议进行更新。".format(
+                    str(self.up["latest"]))
+                dlerr("检测到有新版本 {} ，本次更新为Bug修复版本，强烈建议进行更新。".format(str(self.up["latest"])),
+                      self, title="更新提示", show_time=self.up["flag_time"])
+            else:
+                text = "我们检测到了新的版本，版本号：{}\n本次更新类型未知，可能是后续版本的新更新类型。".format(
+                    str(self.up["latest"]))
+                dlwar("检测到有新版本 {} ，本次更新类型未知，可能是后续版本的新更新类型。".format(str(self.up["latest"])),
+                      self, title="更新提示", show_time=self.up["flag_time"])
             w = InfoBar(
                 icon=InfoBarIcon.INFORMATION,
                 title="有新版本可用",
@@ -319,7 +336,22 @@ class searchmusic(QWidget, QObject):
                 parent=self
             )
 
-            self.s = PushButton("去更新")
+            self.s = PushButton(self.up["button"])
+            w.addWidget(self.s)
+            self.s.clicked.connect(self.openlk)
+            w.show()
+        elif self.up["latest"] == "0.0.0":
+            w = InfoBar(
+                icon=InfoBarIcon.ERROR,
+                title=self.up["title"],
+                content=self.up["text"],
+                orient=Qt.Vertical,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_RIGHT,
+                duration=self.up["time"],
+                parent=self
+            )
+            self.s = PushButton(self.up["button"])
             w.addWidget(self.s)
             self.s.clicked.connect(self.openlk)
             w.show()
@@ -385,7 +417,7 @@ class searchmusic(QWidget, QObject):
             dlwar(content='你还没有输入噢', parent=self)
             return 0
         elif songInfos == "NetworkError":
-            dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent = self)
+            dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent=self)
             return 0
         self.songdata = songInfos
         self.tableView.setRowCount(self.spinBox.value())
