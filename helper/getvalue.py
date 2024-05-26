@@ -26,8 +26,8 @@ upurl = "https://json.zenglingkun.cn/update/md/index.json"
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.4.2 Fix 1"
+VERSION = "2.5.0"
 HELP_URL = "https://md.azprod.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.4.2_Fix_1"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.5.0"
 AZ_URL = "https://azstudio.net.cn/"

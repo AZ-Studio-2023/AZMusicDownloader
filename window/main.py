@@ -15,14 +15,34 @@ from Interface.localmusics import localmusics
 from Interface.playlist import playlist
 from helper.config import Config
 from Interface.plugin import plugins
+from helper.config import cfg
+from helper.getvalue import apipath, autoapi
+
+try:
+    u = open(apipath, "r")
+    data = json.loads(u.read())
+    api = data["api"]
+    q_api = data["q_api"]
+    u.close()
+except:
+    api = autoapi
+    q_api = ""
 
 # Print logs | 日志输出
-print("————————日志信息————————")
-if Config.beta.value:
-    print("Beta实验功能：启用")
-else:
-    print("Beta实验功能：禁用")
-print(f"显示语言：{Config.language.value}")
+if cfg.debug_card.value:
+    print("————————日志信息————————")
+    if Config.beta.value:
+        print("Beta实验功能：启用")
+    else:
+        print("Beta实验功能：禁用")
+    if cfg.debug_card.value:
+        print("Debug模式：启用")
+    else:
+        print("Debug模式：禁用")
+    print("使用的NeteaseCloudMusicApi：" + api)
+    print("使用的QQMusicApi：" + q_api)
+    print("选择的API："+cfg.apicard.value)
+    print(f"显示语言：{Config.language.value}")
 
 if not os.path.exists("plugins"):
     os.mkdir("plugins")
@@ -50,7 +70,8 @@ class Window(MSFluentWindow):
         self.plugin_dir = "plugins"
         self.plugins = {}
         num = 0
-        print("————————插件导入————————")
+        if cfg.debug_card.value:
+            print("————————插件导入————————")
         for dirname in get_folders(self.plugin_dir):
             for filename in os.listdir(f'plugins\\{dirname}'):
                 if filename.endswith('.py'):
@@ -60,11 +81,14 @@ class Window(MSFluentWindow):
                         module = importlib.import_module(module_name)
                         plugin_class = getattr(module, plugin_name.capitalize())
                         self.plugins[plugin_name] = plugin_class()
-                        print(f"导入插件: {plugin_name}")
+                        if cfg.debug_card.value:
+                            print(f"导入插件: {plugin_name}")
                         num = num + 1
                     except Exception as e:
-                        print(f"导入{plugin_name}插件错误: {e}")
-        print(f"成功导入了{str(num)}个插件")
+                        if cfg.debug_card.value:
+                            print(f"导入{plugin_name}插件错误: {e}")
+        if cfg.debug_card.value:
+            print(f"成功导入了{str(num)}个插件")
 
     def run_plugins(self):
         for plugin_name, plugin_instance in self.plugins.items():
@@ -73,7 +97,8 @@ class Window(MSFluentWindow):
             get_v.close()
             icon = data["show_icon"]
             name = data["name"]
-            print(f"将插件添加至导航栏: {plugin_name}")
+            if cfg.debug_card.value:
+                print(f"将插件添加至导航栏: {plugin_name}")
             exec(f"self.addSubInterface(plugin_instance, {icon}, '{name}')")
 
     def initNavigation(self):

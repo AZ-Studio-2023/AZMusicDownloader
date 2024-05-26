@@ -21,9 +21,11 @@ try:
     u = open(apipath, "r")
     data = json.loads(u.read())
     api = data["api"]
+    q_api = data["q_api"]
     u.close()
 except:
     api = autoapi
+    q_api = ""
 mkf()
 
 
@@ -43,7 +45,10 @@ class getlist(QThread):
         value = data["value"]
         api_value = data["api_value"]
         keywords = text
-        self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value)
+        if cfg.apicard.value == "NCMA":
+            self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value)
+        else:
+            self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, server="qqma")
         self.finished.emit()
 
 
@@ -60,27 +65,33 @@ class downloading(QThread):
         api = data["api"]
         song = data["song"]
         singer = data["singer"]
-        url = AZMusicAPI.geturl(id=id, api=api)
+        if cfg.apicard.value == "NCMA":
+            url = AZMusicAPI.geturl(id=id, api=api)
+        else:
+            url = AZMusicAPI.geturl(id=id, api=api, server="qqma")
         if url == "Error 3":
-            dlerr(content='这首歌曲无版权，暂不支持下载', parent=self)
-            return 0
+            self.show_error = "Error 3"
+            self.finished.emit("Error")
+        elif url == "Error 4":
+            self.show_error = "Error 4"
+            self.finished.emit("Error")
         elif url == "NetworkError":
-            dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent=self)
-            return 0
+            self.show_error = "NetworkError"
+            self.finished.emit("Error")
+        if not "Error" in url:
+            response = requests.get(url, stream=True)
+            file_size = int(response.headers.get('content-length', 0))
+            chunk_size = file_size // 100
+            path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
+            with open(path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    f.write(chunk)
+                    downloaded_bytes = f.tell()
+                    progress = downloaded_bytes * 100 // file_size
+                    if downloaded_bytes % chunk_size == 0:
+                        self.finished.emit(str(progress))
 
-        response = requests.get(url, stream=True)
-        file_size = int(response.headers.get('content-length', 0))
-        chunk_size = file_size // 100
-        path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
-        with open(path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=chunk_size):
-                f.write(chunk)
-                downloaded_bytes = f.tell()
-                progress = downloaded_bytes * 100 // file_size
-                if downloaded_bytes % chunk_size == 0:
-                    self.finished.emit(str(progress))
-
-        self.finished.emit(str(200))
+            self.finished.emit(str(200))
 
 
 # class Worker(QObject):
@@ -364,7 +375,16 @@ class searchmusic(QWidget, QObject):
         # self.lworker.started.connect(
         #     lambda: self.lworker.run(text=self.lineEdit.text(), value=self.spinBox.value(), api_value=api))
         u = open(search_log, "w")
-        u.write(json.dumps({"text": self.lineEdit.text(), "api_value": api, "value": self.spinBox.value()}))
+        if cfg.apicard.value == "NCMA":
+            if api == "" or api is None:
+                dlerr("未配置NeteaseCloudMusicApi地址", parent=self)
+                return "Error"
+            u.write(json.dumps({"text": self.lineEdit.text(), "api_value": api, "value": self.spinBox.value()}))
+        else:
+            if q_api == "" or q_api is None:
+                dlerr("未配置QQMusicApi地址", parent=self)
+                return "Error"
+            u.write(json.dumps({"text": self.lineEdit.text(), "api_value": q_api, "value": self.spinBox.value()}))
         u.close()
         self.lworker.start()
 
@@ -396,7 +416,16 @@ class searchmusic(QWidget, QObject):
             return 0
         # self.dworker.started.connect(lambda: self.dworker.run(id=song_id, api=api, song=song, singer=singer))
         u = open(download_log, 'w')
-        u.write(json.dumps({"id": song_id, "api": api, "song": song, "singer": singer}))
+        if cfg.apicard.value == "NCMA":
+            if api == "" or api is None:
+                dlerr("未配置NeteaseCloudMusicApi地址", parent=self)
+                return "Error"
+            u.write(json.dumps({"id": song_id, "api": api, "song": song, "singer": singer}))
+        else:
+            if q_api == "" or q_api is None:
+                dlerr("未配置QQMusicApi地址", parent=self)
+                return "Error"
+            u.write(json.dumps({"id": song_id, "api": q_api, "song": song, "singer": singer}))
         u.close()
         self.dworker.start()
 
@@ -454,6 +483,7 @@ class searchmusic(QWidget, QObject):
                 data = self.songdata[row]
             except:
                 dlerr(content='您选中的行无数据', parent=self)
+                return 0
             song_id = data["id"]
             song = data["name"]
             singer = data["artists"]
@@ -471,5 +501,17 @@ class searchmusic(QWidget, QObject):
             text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
             dlsuc(content=text, parent=self)
             self.ProgressBar.setHidden(True)
+        elif progress == "Error":
+            error = self.dworker.show_error
+            self.dworker.quit()
+            self.ProgressBar.setHidden(True)
+            self.primaryButton1.setEnabled(False)
+            self.tableView.clearSelection()
+            if error == "Error 3":
+                dlerr(content='这首歌曲无版权，暂不支持下载', parent=self)
+            elif error == "Error 4":
+                dlerr(content='获取链接失败，建议检查API服务器是否配置了账号Cookie', parent=self)
+            elif error == "NetworkError":
+                dlerr(content='您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁', parent=self)
         else:
             self.ProgressBar.setValue(int(progress))

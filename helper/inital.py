@@ -23,7 +23,7 @@ def mkf():
         d.close()
     if not path.exists(apipath):
         u = open(apipath, "w")
-        u.write(json.dumps({"api": autoapi}))
+        u.write(json.dumps({"api": autoapi, "q_api": ""}))
         u.close()
     if not path.exists(dlpath):
         makedirs(dlpath)

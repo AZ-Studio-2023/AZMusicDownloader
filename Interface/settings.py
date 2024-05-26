@@ -95,6 +95,13 @@ class SettingInterface(ScrollArea):
             configItem=cfg.update_card,
             parent=self.appGroup
         )
+        self.debug_Card = SwitchSettingCard(
+            FIF.DEVELOPER_TOOLS,
+            self.tr('Debug模式'),
+            self.tr('开启后，全局异常捕获将会被关闭，并在启动时输出日志，方便开发时检查异常。'),
+            configItem=cfg.debug_card,
+            parent=self.appGroup
+        )
         self.backtoinit = PushSettingCard(
             self.tr('重置'),
             FIF.CANCEL,
@@ -120,7 +127,15 @@ class SettingInterface(ScrollArea):
             configItem=cfg.hotcard,
             parent=self.searchGroup
         )
-
+        self.apiCard = ComboBoxSettingCard(
+            cfg.apicard,
+            FIF.GLOBE,
+            self.tr('第三方音乐API'),
+            self.tr('仅会修改搜索下载页使用的API。由于QQMA需要账号COOKIE才能进行调用，请自行部署。'),
+            texts=['NCMA', 'QQMA'],
+            parent=self.searchGroup
+        )
+        #self.apiCard.setEnabled(False)
         # About
         self.aboutGroup = SettingCardGroup(self.tr('关于'), self.scrollWidget)
         self.helpCard = HyperlinkCard(
@@ -180,6 +195,7 @@ class SettingInterface(ScrollArea):
 
         self.appGroup.addSettingCard(self.beta)
         self.appGroup.addSettingCard(self.Update_Card)
+        self.appGroup.addSettingCard(self.debug_Card)
         self.appGroup.addSettingCard(self.backtoinit)
 
         self.aboutGroup.addSettingCard(self.helpCard)
@@ -188,6 +204,7 @@ class SettingInterface(ScrollArea):
         
         self.searchGroup.addSettingCard(self.twitCard)
         self.searchGroup.addSettingCard(self.hotCard)
+        self.searchGroup.addSettingCard(self.apiCard)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
@@ -247,9 +264,9 @@ class SettingInterface(ScrollArea):
         
     def __changelog(self):
         view = FlyoutView(
-            title='AZMusicDownloader V2.4.2更新日志 ',
-            content="1.添加版本检查功能，重大更新不再错过\n2.删除了仅存的搜索页广告，当前全局无广告！\n3.为AZMusicDownloader制作LOGO，全局替换新LOGO\n4"
-                    ".修复无网络连接进入时报错(Fix 1)\n5.优化了版本检查(Fix 1)",
+            title='AZMusicDownloader V2.5.0更新日志 ',
+            content="1.添加对QQMusicApi的支持\n2.修复了搜索页Bug\n3.将AZMusicAPI更新为1.4.6\n4"
+                    ".添加Debug模式",
             #image='resource/splash.png',
             isClosable=True
         )

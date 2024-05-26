@@ -8,11 +8,13 @@ from PyQt5.QtGui import QPixmap
 from win32api import MessageBox
 from win32con import MB_ICONHAND
 from helper.inital import mkf
+from helper.config import cfg
 
-def global_exception_handler(exc_type, exc_value, exc_traceback):
-    msesg = str(exc_type) + str(exc_value) + str(exc_traceback)
-    MessageBox(0, msesg, "请将这个错误反馈给我们", MB_ICONHAND)
-sys.excepthook = global_exception_handler
+if not cfg.debug_card.value:
+    def global_exception_handler(exc_type, exc_value, exc_traceback):
+        msesg = str(exc_type) + str(exc_value) + str(exc_traceback)
+        MessageBox(0, msesg, "请将这个错误反馈给我们", MB_ICONHAND)
+    sys.excepthook = global_exception_handler
 
 if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion().build >= 7601:
     QApplication.setHighDpiScaleFactorRoundingPolicy(
