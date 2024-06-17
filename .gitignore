@@ -1,1 +1,3 @@
 *.pyc
+*.json
+test.py

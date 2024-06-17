@@ -1,26 +1,17 @@
 # coding: utf-8
-import sys
+import os
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import ListWidget
-import os
 from qfluentwidgets import ToolButton, PrimaryToolButton
 from qfluentwidgets import FluentIcon as FIF
 import subprocess
+
+from helper.localmusicsHelper import get_all_music
 from helper.config import cfg
 from helper.inital import mkf
 
-path = cfg.get(cfg.downloadFolder)
-mkf()
-def get_all_music():
-    all_music = []
-    path = cfg.get(cfg.downloadFolder)
-    for file_name in os.listdir(path):
-        if file_name.endswith(".mp3"):
-            all_music.append(file_name)
-    return all_music
 
 class localmusics(QWidget):
 

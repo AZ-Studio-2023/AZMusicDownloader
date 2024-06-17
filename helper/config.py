@@ -29,6 +29,8 @@ class Config(QConfig):
     # Folders
     downloadFolder = ConfigItem(
         "Folders", "Download", autopath, FolderValidator())
+    toast = ConfigItem(
+        "Folders", "toast", False, BoolValidator(), restart=True)
 
     # Application
     beta = ConfigItem(

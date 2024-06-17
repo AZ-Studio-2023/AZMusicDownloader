@@ -2,15 +2,15 @@
 from helper.config import cfg
 from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, CustomColorSettingCard,
                             OptionsSettingCard, PushSettingCard, setTheme, isDarkTheme,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea, PushButton,
+                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea, PushButton, PrimaryPushButton,
                             ComboBoxSettingCard, ExpandLayout, Theme, InfoBar, FlyoutView, Flyout)
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 from sys import platform, getwindowsversion
-from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, RELEASE_URL, autopath, AZ_URL
-from helper.inital import delfin
+from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, RELEASE_URL, autopath, AZ_URL,verdetail
+from helper.inital import delfin, get_update, showup
 
 class SettingInterface(ScrollArea):
     musicFoldersChanged = pyqtSignal(list)
@@ -25,6 +25,8 @@ class SettingInterface(ScrollArea):
         self.expandLayout = ExpandLayout(self.scrollWidget)
         self.setObjectName('settings')
         self.settingLabel = QLabel(self.tr("设置"), self)
+        self.upworker = get_update()
+        self.upworker.finished.connect(self.showupupgrade)
         
         # Personalize
         self.personalGroup = SettingCardGroup(self.tr('个性化'), self.scrollWidget)
@@ -51,7 +53,7 @@ class SettingInterface(ScrollArea):
             FIF.LANGUAGE,
             self.tr('Language'),
             self.tr('Set your preferred language for UI'),
-            texts=['简体中文', '繁體中文', 'English', self.tr('Use system setting')],
+            texts=['简体中文', self.tr('Use system setting')],
             parent=self.personalGroup
         )
         self.micaCard = SwitchSettingCard(
@@ -66,17 +68,24 @@ class SettingInterface(ScrollArea):
         self.DownloadSettings = SettingCardGroup(self.tr("下载设置"), self.scrollWidget)
         self.downloadFolderCard = PushSettingCard(
             self.tr('选择目录'),
-            FIF.DOWNLOAD,
+            FIF.FOLDER,
             self.tr("下载目录"),
             cfg.get(cfg.downloadFolder),
             self.DownloadSettings
         )
         self.FolderAuto = PushSettingCard(
             self.tr('恢复默认'),
-            FIF.DOWNLOAD,
+            FIF.CLEAR_SELECTION,
             self.tr("恢复下载目录默认值"),
             self.tr('下载目录默认值为：') + autopath + self.tr('（即用户音乐文件夹）'),
             self.DownloadSettings
+        )
+        self.toast = SwitchSettingCard(
+            FIF.MEGAPHONE,
+            self.tr('使用Windows系统通知'),
+            self.tr("开启后，下载完毕时将使用Windows系统通知通知您"),
+            configItem=cfg.toast,
+            parent=self.DownloadSettings,
         )
 
         # Application
@@ -162,7 +171,6 @@ class SettingInterface(ScrollArea):
             self.aboutGroup
         )
         
-        self.languageCard.setEnabled(False)
         self.micaCard.setEnabled(platform == 'win32' and getwindowsversion().build >= 22000)
         self.__initWidget()
 
@@ -187,6 +195,8 @@ class SettingInterface(ScrollArea):
         # add cards to group
         self.DownloadSettings.addSettingCard(self.downloadFolderCard)
         self.DownloadSettings.addSettingCard(self.FolderAuto)
+        if cfg.beta:
+            self.DownloadSettings.addSettingCard(self.toast)
 
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
@@ -261,12 +271,15 @@ class SettingInterface(ScrollArea):
         QDesktopServices.openUrl(QUrl(RELEASE_URL))
     def openaz(self):
         QDesktopServices.openUrl(QUrl(AZ_URL))
+    def showupupgrade(self, updata):
+        showup(parent = self, updata = updata, upworker = self.upworker)
+    def upupgrade(self):
+        self.upworker.start()
         
     def __changelog(self):
         view = FlyoutView(
             title='AZMusicDownloader V2.5.0更新日志 ',
-            content="1.添加对QQMusicApi的支持\n2.修复了搜索页Bug\n3.将AZMusicAPI更新为1.4.6\n4"
-                    ".添加Debug模式",
+            content=verdetail,
             #image='resource/splash.png',
             isClosable=True
         )
@@ -281,6 +294,11 @@ class SettingInterface(ScrollArea):
         button2.setFixedWidth(120)
         button2.clicked.connect(self.openaz)
         view.addWidget(button2, align=Qt.AlignRight)
+        
+        button3 = PrimaryPushButton('Check Update')
+        button3.setFixedWidth(120)
+        button3.clicked.connect(self.upupgrade)
+        view.addWidget(button3, align=Qt.AlignRight)
 
         # adjust layout (optional)
         view.widgetLayout.insertSpacing(1, 5)

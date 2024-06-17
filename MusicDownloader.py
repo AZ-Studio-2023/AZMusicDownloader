@@ -1,22 +1,20 @@
-from PyQt5.QtWidgets import QApplication, QSplashScreen
+from PyQt5.QtWidgets import QApplication, QSplashScreen, QMessageBox, QWidget
 from qfluentwidgets import FluentTranslator
 from helper.config import cfg
 from window.main import Window
 import sys
 from PyQt5.QtCore import Qt, QTranslator
 from PyQt5.QtGui import QPixmap
-from win32api import MessageBox
-from win32con import MB_ICONHAND
 from helper.inital import mkf
 from helper.config import cfg
 
 if not cfg.debug_card.value:
     def global_exception_handler(exc_type, exc_value, exc_traceback):
-        msesg = str(exc_type) + str(exc_value) + str(exc_traceback)
-        MessageBox(0, msesg, "请将这个错误反馈给我们", MB_ICONHAND)
+        msesg = '{}\n{}\n{}'.format(str(exc_type), str(exc_value), str(exc_traceback))
+        QMessageBox.critical(w, "There's an error ! ! !", msesg, QMessageBox.Yes)
     sys.excepthook = global_exception_handler
 
-if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion().build >= 7601:
+if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion().build >= 10240:
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -49,5 +47,7 @@ if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion(
     splash.finish(w)
     app.exec_()
 else:
-    text = "不支持的操作系统：" + sys.platform
-    MessageBox(0, text, "软件启动错误", MB_ICONHAND)
+    app = QApplication(sys.argv)
+    w = QWidget()
+    text = "Unsupported operating system: " + sys.platform
+    QMessageBox.critical(w, "There is an error when the Application is starting !", text, QMessageBox.Yes)

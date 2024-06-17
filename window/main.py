@@ -95,11 +95,12 @@ class Window(MSFluentWindow):
             get_v = open(f"plugins/{plugin_name}/index.json", "r", encoding="utf-8")
             data = json.loads(get_v.read())
             get_v.close()
-            icon = data["show_icon"]
-            name = data["name"]
-            if cfg.debug_card.value:
-                print(f"将插件添加至导航栏: {plugin_name}")
-            exec(f"self.addSubInterface(plugin_instance, {icon}, '{name}')")
+            if bool(data["nav"]):
+                icon = data["show_icon"]
+                name = data["name"]
+                if cfg.debug_card.value:
+                    print(f"将插件添加至导航栏: {plugin_name}")
+                exec(f"self.addSubInterface(plugin_instance, {icon}, '{name}')")
 
     def initNavigation(self):
         self.addSubInterface(searchmusic(), FIF.CARE_RIGHT_SOLID, '搜索下载')
