@@ -1,12 +1,11 @@
-from PyQt5.QtWidgets import QApplication, QSplashScreen, QMessageBox, QWidget
-from qfluentwidgets import FluentTranslator
-from helper.config import cfg
-from window.main import Window
 import sys
 from PyQt5.QtCore import Qt, QTranslator
 from PyQt5.QtGui import QPixmap
-from helper.inital import mkf
+from PyQt5.QtWidgets import QApplication, QSplashScreen, QMessageBox, QWidget
+from qfluentwidgets import FluentTranslator
 from helper.config import cfg
+from helper.inital import mkf
+from window.main import Window
 
 if not cfg.debug_card.value:
     def global_exception_handler(exc_type, exc_value, exc_traceback):

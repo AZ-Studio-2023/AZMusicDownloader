@@ -278,7 +278,7 @@ class SettingInterface(ScrollArea):
         
     def __changelog(self):
         view = FlyoutView(
-            title='AZMusicDownloader V2.5.0更新日志 ',
+            title=f'AZMusicDownloader V{VERSION}更新日志 ',
             content=verdetail,
             #image='resource/splash.png',
             isClosable=True
