@@ -6,7 +6,8 @@ from helper.flyoutmsg import dlsuc, dlwar, flyout_bottom
 from helper.getvalue import outapoem
 from PyQt5.QtCore import QThread
 from helper.config import cfg
-from helper.getvalue import (apipath, download_log, search_log, autoapi, configpath, upurl, VERSION,
+from qfluentwidgets import isDarkTheme
+from helper.getvalue import (download_log, search_log, configpath, upurl, VERSION,
                              playlistpath, logpath, playlist_download_log, playlist_search_log)
 
 
@@ -27,10 +28,6 @@ def mkf():
     if not path.exists(search_log):
         d = open(search_log, "w")
         d.close()
-    if not path.exists(apipath):
-        u = open(apipath, "w")
-        u.write(json.dumps({"api": autoapi, "q_api": ""}))
-        u.close()
     if not path.exists(dlpath):
         makedirs(dlpath)
     if not path.exists(playlistpath):
@@ -38,7 +35,7 @@ def mkf():
 
 
 # 删除用户数据
-def delfin():
+def delfin(IfMusicPath=False):
     if path.exists(configpath):
         remove(configpath)
     if path.exists(playlist_download_log):
@@ -47,10 +44,12 @@ def delfin():
         remove(playlist_search_log)
     if path.exists(download_log):
         remove(download_log)
-    if path.exists(apipath):
-        remove(apipath)
     if path.exists(search_log):
         remove(search_log)
+    if IfMusicPath:
+        downloadFolder = cfg.get(cfg.downloadFolder)
+        if path.exists(downloadFolder):
+            remove(downloadFolder)
 
 
 # 检查更新
@@ -109,3 +108,9 @@ def showup(parent, updata, upworker):
     else:
         dlsuc(content = "您使用的版本是最新版本", parent=parent, title="恭喜", show_time=5000)
     upworker.quit()
+
+# qss设置
+def setSettingsQss(parent, which="setting_interface"):
+    theme = 'dark' if isDarkTheme() else 'light'
+    with open(f'resource/qss/{theme}/{which}.qss', encoding='utf-8') as f:
+        parent.setStyleSheet(f.read())

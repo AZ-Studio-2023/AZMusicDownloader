@@ -1,21 +1,15 @@
 import json
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QTableWidgetItem
+
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 import os
 import requests
 from helper.config import cfg
-from helper.getvalue import playlist_search_log, apipath, playlist_download_log, autoapi, playlistpath
+from helper.getvalue import playlist_search_log, playlist_download_log, autoncmaapi, playlistpath
 from helper.flyoutmsg import dlerr, dlwar
 
-try:
-    u = open(apipath, "r")
-    data = json.loads(u.read())
-    api = data["api"]
-    u.close()
-except:
-    api = autoapi
-
+api = cfg.ncma_api.value
 
 class getlist(QThread):
     finished = pyqtSignal()
@@ -122,7 +116,7 @@ def searchstart(PushButton, lworker, ComboBox, LineEdit, parent):
         dlerr(outid=1, parent=parent)
 
 
-def music(TableWidget, TableWidget_2, parent):
+def music(TableWidget, TableWidget_2, Button, parent):
     try:
         name = get_folders(playlistpath)[TableWidget.currentIndex().row()]
         u = open("{}\\{}\\index.json".format(playlistpath, name), "r")
@@ -130,28 +124,28 @@ def music(TableWidget, TableWidget_2, parent):
         u.close()
         data = data["content"]
         TableWidget_2.clearContents()
+        TableWidget_2.setRowCount(len(data))
 
+        #All = []
         for i in range(len(data)):
-            add = []
+            #add = []
             id_v = str(data[i]["id"])
             name_v = str(data[i]["name"])
             artists_v = str(data[i]["artists"])
             album_v = str(data[i]["album"])
-
-            add.append(id_v)
-            add.append(name_v)
-            add.append(artists_v)
-            add.append(album_v)
-            for j in range(4):
-                TableWidget_2.setItem(i, j, QTableWidgetItem(add[j]))
-
+            
+            TableWidget_2.setItem(i, 0, QTableWidgetItem(id_v))
+            TableWidget_2.setItem(i, 1, QTableWidgetItem(name_v))
+            TableWidget_2.setItem(i, 2, QTableWidgetItem(artists_v))
+            TableWidget_2.setItem(i, 3, QTableWidgetItem(album_v))
+            
         TableWidget_2.resizeColumnsToContents()
-        TableWidget_2.setRowCount(len(data))
+        Button.setText(name)
     except:
         dlerr(erid=2, parent=parent)
 
 
-def search(PushButton, lworker, TableWidget):
+def search(lworker, TableWidget):
     data = get_folders(playlistpath)
     TableWidget.setRowCount(len(data))
     TableWidget.clearContents()
@@ -164,7 +158,6 @@ def search(PushButton, lworker, TableWidget):
             TableWidget.setItem(i, j, QTableWidgetItem(data_v[j]))
 
     TableWidget.resizeColumnsToContents()
-    PushButton.setEnabled(True)
     lworker.quit()
 
 
@@ -217,3 +210,4 @@ def get_folders(folder_path):
             folders.append(item)
 
     return folders
+

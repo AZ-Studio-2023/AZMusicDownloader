@@ -1,29 +1,28 @@
-import winreg
 from datetime import date
 from random import randint
+from PyQt5.QtCore import QStandardPaths
+import ctypes
 
-reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
-
-config_path_value = winreg.QueryValueEx(reg_key, "AppData")
-DataPath = config_path_value[0]
-allpath = "{}\\AZMusicDownload".format(DataPath)
+config_path_value = QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)
+allpath = "{}\\AZMusicDownload".format(config_path_value)
 logpath = "{}\\log".format(allpath)
 playlistpath = "{}\\playlist".format(allpath)
 
 configpath = "{}\\config.json".format(allpath)
-apipath = "{}\\api.json".format(allpath)
+upurl = "https://json.zenglingkun.cn/update/md/index.json"
 
 download_log = "{}\\download_log.json".format(logpath)
 search_log = "{}\\search_log.json".format(logpath)
 playlist_download_log = "{}\\playlist_download_log.json".format(logpath)
 playlist_search_log = "{}\\playlist_search_log.json".format(logpath)
 
-music_path_value = winreg.QueryValueEx(reg_key, "My Music")
-personalmusicpath = music_path_value[0]
-autopath = "{}\\AZMusicDownload".format(personalmusicpath)
+music_path_value = QStandardPaths.writableLocation(QStandardPaths.MusicLocation)
+autopath = "{}\\AZMusicDownload".format(music_path_value)
+localView = None
 
-autoapi = "https://ncma.azprod.cn/"  # API为ncma的克隆项目
-upurl = "https://json.zenglingkun.cn/update/md/index.json"
+autoncmaapi = "https://ncma.azprod.cn/"  # API为ncma的克隆项目
+autoqqmaapi = ""
+apilists = ['NCMA', 'QQMA']
 
 # 古诗
 poem =  ["天阶夜色凉如水，卧看牵牛织女星。", 
@@ -50,6 +49,27 @@ def outapoem():
     outpoem = poem[randint(0, len(poem) - 1)]
     return outpoem
 
+def GetDefaultThemeColor():
+    dwmapi = ctypes.windll.dwmapi
+    color = ctypes.c_ulong()
+    opaque = ctypes.c_bool()
+    
+    # Call DwmGetColorizationColor
+    result = dwmapi.DwmGetColorizationColor(ctypes.byref(color), ctypes.byref(opaque))
+    
+    if result == 0:  # S_OK
+        # Extract the color components (ARGB format)
+        alpha = (color.value >> 24) & 0xFF
+        red = (color.value >> 16) & 0xFF
+        green = (color.value >> 8) & 0xFF
+        blue = color.value & 0xFF
+        
+        return(f"#{red:02X}{green:02X}{blue:02X}")
+    else:
+        return("#0078D4")
+
+
+
 # 错误内容列表
 outputlist = ['未搜索到相关的歌曲，换个关键词试试吧',
            '你还没有输入噢',
@@ -59,14 +79,16 @@ outputlist = ['未搜索到相关的歌曲，换个关键词试试吧',
            "未配置QQMusicApi地址",
            '您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁',
            '这首歌曲无版权，暂不支持下载',
-           '获取链接失败，建议检查API服务器是否配置了账号Cookie']
+           '获取链接失败，建议检查API服务器是否配置了账号Cookie',
+           '插件未成功导入，请检查插件']
 
-verdetail = "1.优化项目结构，UI与逻辑分离\n2.支持Windows系统通知\n3.修复了部分歌单的已知Bug"
+verdetail = ("1.优化项目结构，UI与逻辑分离\n2.支持Windows系统通知\n3.修复了部分歌单的已知Bug\n4.重构插件页，无需手动导入插件\n5.添加了插件的更多功能\n7.重构我的音乐库页，提升用户体验\n8"
+             ".重构歌单页，提升用户体验")
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.5.2"
+VERSION = "2.6.0"
 HELP_URL = "https://md.azprod.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.5.2"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.6.0"
 AZ_URL = "https://azstudio.net.cn/"

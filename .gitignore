@@ -1,3 +1,8 @@
 *.pyc
 *.json
 test.py
+plugins/*
+.vscode/*
+.idea/*
+/shelf/
+/workspace.xml

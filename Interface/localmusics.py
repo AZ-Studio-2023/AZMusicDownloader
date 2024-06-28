@@ -1,83 +1,27 @@
 # coding: utf-8
-import os
-
-from PyQt5.QtWidgets import QListWidgetItem, QWidget, QHBoxLayout, QVBoxLayout
-
-from qfluentwidgets import ListWidget
-from qfluentwidgets import ToolButton, PrimaryToolButton
-from qfluentwidgets import FluentIcon as FIF
-import subprocess
-
-from helper.localmusicsHelper import get_all_music
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QHeaderView, QAbstractItemView
+from qfluentwidgets import TableWidget
 from helper.config import cfg
-from helper.inital import mkf
+from helper.localmusicsHelper import ref, openthemusic
 
 
 class localmusics(QWidget):
 
     def __init__(self):
         super().__init__()
-        # setTheme(Theme.DARK)
         self.setObjectName("localmusics")
         self.hBoxLayout = QHBoxLayout(self)
-        self.vBoxLayout = QVBoxLayout(self)
-        self.listWidget = ListWidget(self)
+        self.local_view = TableWidget(self)
+        self.local_view.setColumnCount(4)
+        self.local_view.verticalHeader().hide()
+        self.local_view.setHorizontalHeaderLabels(['路径', '歌曲名', '艺术家', '专辑'])
+        self.local_view.resizeColumnsToContents()
+        self.local_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.local_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        # self.listWidget.setAlternatingRowColors(True)
-        self.data = get_all_music()
-        stands = self.data
-        for stand in stands:
-            item = QListWidgetItem(stand)
-            # item.setIcon(QIcon(':/qfluentwidgets/images/logo.png'))
-            # item.setCheckState(Qt.Unchecked)
-            self.listWidget.addItem(item)
-        
-        self.hBoxLayout.setContentsMargins(0, 0, 0, 0)
-        self.listWidget.clicked.connect(self.openbutton)
-        self.resize(300, 400)
-        self.openmusic = PrimaryToolButton(FIF.EMBED,self)
-        self.openmusic.setEnabled(False)
-        self.openmusic.released.connect(self.openthemusic)
-        # self.open_dir = ToolButton(FIF.MUSIC_FOLDER, self)
-        # self.open_dir.setEnabled(True)
-        # self.open_dir.clicked.connect(self.openfolder)
-        self.refmusics = ToolButton(FIF.SYNC, self)
-        self.refmusics.setEnabled(True)
-        self.refmusics.clicked.connect(self.ref)
-        
-        self.vBoxLayout.addStretch(1)  
-        self.vBoxLayout.addWidget(self.openmusic)
-        self.vBoxLayout.addStretch(1) 
-        # self.vBoxLayout.addWidget(self.open_dir)
-        # self.vBoxLayout.addStretch(1)
-        self.vBoxLayout.addWidget(self.refmusics)
-        self.vBoxLayout.addStretch(20) 
-        self.hBoxLayout.addWidget(self.listWidget)
-        self.hBoxLayout.addStretch(20)  
-        self.hBoxLayout.addLayout(self.vBoxLayout)
-        self.hBoxLayout.addStretch(1)  
-        
-        
-    def openbutton(self):
-        self.openmusic.setEnabled(True)
-        
-    def openthemusic(self):
-        row = self.listWidget.currentIndex().row() 
-        name = self.data[row]
-        file_path = os.path.join(cfg.get(cfg.downloadFolder), name)
-        cmd = f'start "" "{file_path}"'
-        subprocess.Popen(cmd, shell=True)
+        ref(local_view=self.local_view, musicpath=cfg.get(cfg.downloadFolder))
 
-    # def openfolder(self):
-    #     f_path = cfg.get(cfg.downloadFolder)
-    #     cmd = f'start {f_path}'
-    #     print(cmd)
-    #     subprocess.Popen(cmd, shell=True)
-
-    def ref(self):
-        self.listWidget.clear()
-        self.data = get_all_music()
-        stands = self.data
-        for stand in stands:
-            item = QListWidgetItem(stand)
-            self.listWidget.addItem(item)
+        self.hBoxLayout.setContentsMargins(30, 30, 30, 30)
+        self.local_view.cellDoubleClicked.connect(lambda: openthemusic(filepath=cfg.get(cfg.downloadFolder)))
+        self.resize(635, 700)
+        self.hBoxLayout.addWidget(self.local_view)

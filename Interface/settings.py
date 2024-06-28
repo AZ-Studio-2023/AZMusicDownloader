@@ -1,22 +1,19 @@
 # coding:utf-8
-from helper.config import cfg
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, CustomColorSettingCard,
-                            OptionsSettingCard, PushSettingCard, setTheme, isDarkTheme,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea, PushButton, PrimaryPushButton,
-                            ComboBoxSettingCard, ExpandLayout, Theme, InfoBar, FlyoutView, Flyout)
+from helper.config import cfg, pfg
+from qfluentwidgets import *
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 from sys import platform, getwindowsversion
-from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, RELEASE_URL, autopath, AZ_URL,verdetail
-from helper.inital import delfin, get_update, showup
+from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, autopath, apilists
+from helper.inital import delfin, get_update, showup, setSettingsQss
+from helper.localmusicsHelper import ref
+from helper.SettingHelper import DeleteAllData, editapi
+from sys import exit
+from helper.flyoutmsg import changelog, restart,setOK
 
 class SettingInterface(ScrollArea):
-    musicFoldersChanged = pyqtSignal(list)
-    acrylicEnableChanged = pyqtSignal(bool)
-    downloadFolderChanged = pyqtSignal(str)
-    minimizeToTrayChanged = pyqtSignal(bool)
     micaEnableChanged = pyqtSignal(bool)
 
     def __init__(self, parent=None):
@@ -26,7 +23,7 @@ class SettingInterface(ScrollArea):
         self.setObjectName('settings')
         self.settingLabel = QLabel(self.tr("设置"), self)
         self.upworker = get_update()
-        self.upworker.finished.connect(self.showupupgrade)
+        self.upworker.finished.connect(lambda updata: showup(parent = self, updata = updata, upworker = self.upworker))
         
         # Personalize
         self.personalGroup = SettingCardGroup(self.tr('个性化'), self.scrollWidget)
@@ -51,41 +48,38 @@ class SettingInterface(ScrollArea):
         self.languageCard = ComboBoxSettingCard(
             cfg.language,
             FIF.LANGUAGE,
-            self.tr('Language'),
-            self.tr('Set your preferred language for UI'),
-            texts=['简体中文', self.tr('Use system setting')],
+            self.tr('语言'),
+            self.tr('当前仅支持简体中文'),
+            texts=['简体中文', self.tr('使用系统设置')],
             parent=self.personalGroup
         )
         self.micaCard = SwitchSettingCard(
             FIF.TRANSPARENT,
-            self.tr('Mica effect'),
-            self.tr('Apply semi transparent to windows and surfaces'),
+            self.tr('云母效果'),
+            self.tr('应用Mica半透明效果（仅支持Windows11）'),
             cfg.micaEnabled,
             self.personalGroup
         )
 
         # Folders
         self.DownloadSettings = SettingCardGroup(self.tr("下载设置"), self.scrollWidget)
-        self.downloadFolderCard = PushSettingCard(
-            self.tr('选择目录'),
+        
+        self.downloadFolderCard = ExpandGroupSettingCard(
             FIF.FOLDER,
-            self.tr("下载目录"),
-            cfg.get(cfg.downloadFolder),
-            self.DownloadSettings
+            self.tr('修改目录'),
+            self.tr("修改下载目录"),
+            self.personalGroup
         )
-        self.FolderAuto = PushSettingCard(
-            self.tr('恢复默认'),
-            FIF.CLEAR_SELECTION,
-            self.tr("恢复下载目录默认值"),
-            self.tr('下载目录默认值为：') + autopath + self.tr('（即用户音乐文件夹）'),
+        self.LabelFolder = SubtitleLabel(f"\n    当前路径为：{cfg.downloadFolder.value}\n", self)
+        self.LabelAuto = SubtitleLabel(f"\n    默认路径为：{autopath}\n", self)
+        self.changeFolder = PrimaryPushButton("选择目录", self)
+        self.AutoFolder = PushButton("恢复默认", self)
+        self.ApiUrlCard = PushSettingCard(
+            self.tr('修改'),
+            FIF.EDIT,
+            self.tr("自定义API地址"),
+            self.tr("修改NCMA或QQMA的API地址"),
             self.DownloadSettings
-        )
-        self.toast = SwitchSettingCard(
-            FIF.MEGAPHONE,
-            self.tr('使用Windows系统通知'),
-            self.tr("开启后，下载完毕时将使用Windows系统通知通知您"),
-            configItem=cfg.toast,
-            parent=self.DownloadSettings,
         )
 
         # Application
@@ -97,18 +91,12 @@ class SettingInterface(ScrollArea):
             configItem=cfg.beta,
             parent=self.appGroup
         )
+        self.beta.checkedChanged.connect(self.beta_enable)
         self.Update_Card = SwitchSettingCard(
             FIF.FLAG,
             self.tr('禁用更新检查'),
             self.tr('开启后启动将不会检查版本更新'),
             configItem=cfg.update_card,
-            parent=self.appGroup
-        )
-        self.debug_Card = SwitchSettingCard(
-            FIF.DEVELOPER_TOOLS,
-            self.tr('Debug模式'),
-            self.tr('开启后，全局异常捕获将会被关闭，并在启动时输出日志，方便开发时检查异常。'),
-            configItem=cfg.debug_card,
             parent=self.appGroup
         )
         self.backtoinit = PushSettingCard(
@@ -137,14 +125,18 @@ class SettingInterface(ScrollArea):
             parent=self.searchGroup
         )
         self.apiCard = ComboBoxSettingCard(
-            cfg.apicard,
+            pfg.apicard,
             FIF.GLOBE,
             self.tr('第三方音乐API'),
             self.tr('仅会修改搜索下载页使用的API。由于QQMA需要账号COOKIE才能进行调用，请自行部署。'),
-            texts=['NCMA', 'QQMA'],
+            texts=apilists,
             parent=self.searchGroup
         )
-        #self.apiCard.setEnabled(False)
+        
+        #BetaOnly
+        if cfg.beta.value:
+            self.betaonly()
+
         # About
         self.aboutGroup = SettingCardGroup(self.tr('关于'), self.scrollWidget)
         self.helpCard = HyperlinkCard(
@@ -155,26 +147,72 @@ class SettingInterface(ScrollArea):
             self.tr('从帮助页面上获取帮助与支持'),
             self.aboutGroup
         )
-        self.feedbackCard = PrimaryPushSettingCard(
+        self.feedbackCard = PushSettingCard(
             self.tr('提供反馈'),
             FIF.FEEDBACK,
             self.tr('提供反馈'),
             self.tr('通过提供反馈来帮助我们打造更好的应用'),
             self.aboutGroup
         )
-        self.aboutCard = PrimaryPushSettingCard(
-            self.tr('Changelog'),
-            FIF.INFO,
+        self.aboutCard = PushSettingCard(
             self.tr('更新日志'),
+            FIF.INFO,
+            self.tr('关于'),
             '© ' + self.tr(' ') + f" {YEAR}, {AUTHOR}. " +
             self.tr('Version') + f" {VERSION}",
             self.aboutGroup
         )
         
-        self.micaCard.setEnabled(platform == 'win32' and getwindowsversion().build >= 22000)
+        self.micaCard.setEnabled(False)
+        if cfg.beta.value:
+            self.toast_Card.setEnabled(platform == 'win32' and getwindowsversion().build >= 17763)
         self.__initWidget()
 
+    def betaonly(self):
+        self.BetaOnlyGroup = SettingCardGroup(self.tr('Beta Only'), self.scrollWidget)
+        self.debug_Card = SwitchSettingCard(
+                FIF.CODE,
+                self.tr('Debug Mode'),
+                self.tr('The global exception capture will be disabled, and there will be outputs in the commandline.(Code Running Only)'),
+                configItem=cfg.debug_card,
+                parent=self.BetaOnlyGroup
+        )
+        self.plugin_Card = SwitchSettingCard(
+                FIF.DICTIONARY_ADD,
+                self.tr('Enable Plugins'),
+                self.tr('You can use more APIs or other features through using plugins.'),
+                configItem=cfg.PluginEnable,
+                parent=self.BetaOnlyGroup
+        )
+        self.toast_Card = SwitchSettingCard(
+                FIF.MEGAPHONE,
+                self.tr('Enable Windows Toast'),
+                self.tr(
+                    'Use System Notification to notice you when the process is finished. ( Windows 10.0.17763 or later)'),
+                configItem=cfg.toast,
+                parent=self.BetaOnlyGroup
+        )
 
+    def beta_enable(self):
+        if cfg.beta.value:
+            self.betaonly()
+            self.toast_Card.setEnabled(platform == 'win32' and getwindowsversion().build >= 17763)
+            self.expandLayout.addWidget(self.BetaOnlyGroup)
+            self.BetaOnlyGroup.addSettingCard(self.debug_Card)
+            self.BetaOnlyGroup.addSettingCard(self.plugin_Card)
+            self.BetaOnlyGroup.addSettingCard(self.toast_Card)
+            self.debug_Card.setVisible(True)
+            self.plugin_Card.setVisible(True)
+            self.toast_Card.setVisible(True)
+            self.BetaOnlyGroup.setVisible(True)
+        else:
+            self.debug_Card.setValue(False)
+            self.plugin_Card.setValue(False)
+            self.toast_Card.setValue(False)
+            self.debug_Card.setVisible(False)
+            self.plugin_Card.setVisible(False)
+            self.toast_Card.setVisible(False)
+            self.BetaOnlyGroup.setVisible(False)
     def __initWidget(self):
         self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -183,7 +221,9 @@ class SettingInterface(ScrollArea):
         self.setWidgetResizable(True)
 
         # initialize style sheet
-        self.__setQss()
+        self.scrollWidget.setObjectName('scrollWidget')
+        self.settingLabel.setObjectName('settingLabel')
+        setSettingsQss(parent=self)
 
         # initialize layout
         self.__initLayout()
@@ -192,11 +232,15 @@ class SettingInterface(ScrollArea):
     def __initLayout(self):
         self.settingLabel.move(60, 63)
         
+        # ExpandCard
+        self.downloadFolderCard.addGroupWidget(self.LabelFolder)
+        self.downloadFolderCard.addGroupWidget(self.LabelAuto)
+        self.downloadFolderCard.addWidget(self.changeFolder)
+        self.downloadFolderCard.addWidget(self.AutoFolder)
+        
         # add cards to group
         self.DownloadSettings.addSettingCard(self.downloadFolderCard)
-        self.DownloadSettings.addSettingCard(self.FolderAuto)
-        if cfg.beta:
-            self.DownloadSettings.addSettingCard(self.toast)
+        self.DownloadSettings.addSettingCard(self.ApiUrlCard)
 
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
@@ -205,8 +249,12 @@ class SettingInterface(ScrollArea):
 
         self.appGroup.addSettingCard(self.beta)
         self.appGroup.addSettingCard(self.Update_Card)
-        self.appGroup.addSettingCard(self.debug_Card)
         self.appGroup.addSettingCard(self.backtoinit)
+        
+        if cfg.beta.value:
+            self.BetaOnlyGroup.addSettingCard(self.debug_Card)
+            self.BetaOnlyGroup.addSettingCard(self.plugin_Card)
+            self.BetaOnlyGroup.addSettingCard(self.toast_Card)
 
         self.aboutGroup.addSettingCard(self.helpCard)
         self.aboutGroup.addSettingCard(self.feedbackCard)
@@ -222,25 +270,10 @@ class SettingInterface(ScrollArea):
         self.expandLayout.addWidget(self.DownloadSettings)
         self.expandLayout.addWidget(self.searchGroup)
         self.expandLayout.addWidget(self.personalGroup)
+        if cfg.beta.value:
+            self.expandLayout.addWidget(self.BetaOnlyGroup)
         self.expandLayout.addWidget(self.appGroup)
         self.expandLayout.addWidget(self.aboutGroup)
-
-    def __setQss(self):
-        """ set style sheet """
-        self.scrollWidget.setObjectName('scrollWidget')
-        self.settingLabel.setObjectName('settingLabel')
-
-        theme = 'dark' if isDarkTheme() else 'light'
-        with open(f'resource/qss/{theme}/setting_interface.qss', encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
-
-    def __showRestartTooltip(self):
-        """ show restart tooltip """
-        InfoBar.warning(
-            '',
-            self.tr('设置需要重启程序后生效'),
-            parent=self.window()
-        )
 
     def __onDownloadFolderCardClicked(self):
         """ download folder card clicked slot """
@@ -249,15 +282,28 @@ class SettingInterface(ScrollArea):
         if not folder or cfg.get(cfg.downloadFolder) == folder:
             return
         cfg.set(cfg.downloadFolder, folder)
-        self.downloadFolderCard.setContent(folder)
+        self.LabelFolder.setText(f"\n    当前路径为：{folder}\n")
+        ref(musicpath=folder)
+        setOK(parent=self.window())
         
     def __FolederAutoCardClicked(self):
         cfg.set(cfg.downloadFolder, autopath)
-        self.downloadFolderCard.setContent(cfg.get(cfg.downloadFolder))
+        self.LabelFolder.setText(f"\n    当前路径为：{autopath}\n")
+        ref(musicpath=autopath)
+        setOK(parent=self.window())
+        
+    def __customapis(self):
+        w = editapi(parent=self.window(), ncmaapi=cfg.ncma_api.value, qqmaapi=cfg.qqma_api.value)
+        if w:
+            cfg.set(cfg.ncma_api, w[0])
+            cfg.set(cfg.qqma_api, w[1])
+            setOK(parent=self.window())
         
     def __backtoinitClicked(self):
-        delfin()
-        self.__showRestartTooltip()
+        w = DeleteAllData(self.window())
+        if not w.exec():
+            delfin(IfMusicPath=w.DataCheckBox.isChecked())
+            exit(0)
 
     def __onThemeChanged(self, theme: Theme):
         """ theme changed slot """
@@ -265,58 +311,30 @@ class SettingInterface(ScrollArea):
         setTheme(theme)
 
         # chang the theme of setting interface
-        self.__setQss()
+        setSettingsQss(parent=self)
+        setOK(parent=self.window())
         
-    def opengithub(self):
-        QDesktopServices.openUrl(QUrl(RELEASE_URL))
-    def openaz(self):
-        QDesktopServices.openUrl(QUrl(AZ_URL))
-    def showupupgrade(self, updata):
-        showup(parent = self, updata = updata, upworker = self.upworker)
-    def upupgrade(self):
-        self.upworker.start()
-        
-    def __changelog(self):
-        view = FlyoutView(
-            title=f'AZMusicDownloader V{VERSION}更新日志 ',
-            content=verdetail,
-            #image='resource/splash.png',
-            isClosable=True
-        )
-        
-        # add button to view
-        button1 = PushButton(FIF.GITHUB, 'GitHub')
-        button1.setFixedWidth(120)
-        button1.clicked.connect(self.opengithub)
-        view.addWidget(button1, align=Qt.AlignRight)
-        
-        button2 = PushButton('AZ Studio')
-        button2.setFixedWidth(120)
-        button2.clicked.connect(self.openaz)
-        view.addWidget(button2, align=Qt.AlignRight)
-        
-        button3 = PrimaryPushButton('Check Update')
-        button3.setFixedWidth(120)
-        button3.clicked.connect(self.upupgrade)
-        view.addWidget(button3, align=Qt.AlignRight)
-
-        # adjust layout (optional)
-        view.widgetLayout.insertSpacing(1, 5)
-        view.widgetLayout.addSpacing(5)
-
-        # show view
-        w = Flyout.make(view, self.aboutCard, self)
-        view.closed.connect(w.close)
+    def beta_not(self):
+        if not cfg.beta.value:
+            self.debug_Card.setValue(False)
+            self.plugin_Card.setValue(False)
+            self.toast_Card.setValue(False)
+            self.debug_Card.setVisible(False)
+            self.plugin_Card.setVisible(False)
+            self.toast_Card.setVisible(False)
+            self.BetaOnlyGroup.setVisible(False)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        cfg.appRestartSig.connect(self.__showRestartTooltip)
+        cfg.appRestartSig.connect(lambda: restart(parent=self.window()))
+        pfg.appRestartSig.connect(lambda: restart(parent=self.window()))
         cfg.themeChanged.connect(self.__onThemeChanged)
+        pfg.themeChanged.connect(self.__onThemeChanged)
         self.micaCard.checkedChanged.connect(self.micaEnableChanged)
-
-        self.downloadFolderCard.clicked.connect(self.__onDownloadFolderCardClicked)
-        self.FolderAuto.clicked.connect(self.__FolederAutoCardClicked)
+        self.AutoFolder.clicked.connect(self.__FolederAutoCardClicked)
+        self.changeFolder.clicked.connect(self.__onDownloadFolderCardClicked)
         self.backtoinit.clicked.connect(self.__backtoinitClicked)
-        self.beta.checkedChanged.connect(self.minimizeToTrayChanged)
-        self.aboutCard.clicked.connect(self.__changelog)
+        self.beta.checkedChanged.connect(self.beta_not)
+        self.aboutCard.clicked.connect(lambda: changelog(parent=self))
         self.feedbackCard.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+        self.ApiUrlCard.clicked.connect(self.__customapis)

@@ -1,11 +1,11 @@
-import sys
-from PyQt5.QtCore import Qt, QTranslator
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QSplashScreen, QMessageBox, QWidget
 from qfluentwidgets import FluentTranslator
 from helper.config import cfg
-from helper.inital import mkf
 from window.main import Window
+import sys
+from PyQt5.QtCore import Qt, QTranslator
+from PyQt5.QtGui import QPixmap
+from helper.inital import mkf
 
 if not cfg.debug_card.value:
     def global_exception_handler(exc_type, exc_value, exc_traceback):
@@ -13,13 +13,12 @@ if not cfg.debug_card.value:
         QMessageBox.critical(w, "There's an error ! ! !", msesg, QMessageBox.Yes)
     sys.excepthook = global_exception_handler
 
-if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion().build >= 10240:
+if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion().build >= 17763:
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     app = QApplication(sys.argv)
-    mkf()
     
     splash_pix = QPixmap('resource/splash.png')
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
@@ -31,7 +30,9 @@ if __name__ == '__main__' and sys.platform == 'win32' and sys.getwindowsversion(
     splash_height = 260
     splash.setFixedSize(splash_width, splash_height)
     splash.move((screen_width - splash_width) // 2, (screen_height - splash_height) // 2)
-    
+
+    mkf()
+
     locale = cfg.get(cfg.language).value
     fluentTranslator = FluentTranslator(locale)
     settingTranslator = QTranslator()
