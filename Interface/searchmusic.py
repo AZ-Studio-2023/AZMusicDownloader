@@ -11,24 +11,6 @@ from helper.inital import get_update, showup
 from helper.downloadHelper import downloading, download
 from helper.searchmusicHelper import getlist, sethotlineEdit, search, searchstart, rundownload
 
-# class Worker(QObject):
-#     finished = pyqtSignal()
-#
-#     @pyqtSlot()
-#     def do_work(self, text):
-#         if helper.config.Config.twitcard.value == True and is_english_and_characters(text):
-#             try:
-#                 self.key = AZMusicAPI.searchkey(text)mn
-#             except:
-#                 self.key = []
-#                 return 0
-#             if "Error" in self.key:
-#                 self.key = []
-#                 return 0
-#         else:
-#             self.key = []
-#
-#         self.finished.emit()
 
 class CustomTableItemDelegate(TableItemDelegate):
     """ Custom table item delegate """
@@ -45,6 +27,7 @@ class CustomTableItemDelegate(TableItemDelegate):
             option.palette.setColor(QPalette.Text, Qt.red)
             option.palette.setColor(QPalette.HighlightedText, Qt.red)
 
+
 class searchmusic(QWidget, QObject):
 
     def __init__(self):
@@ -58,11 +41,13 @@ class searchmusic(QWidget, QObject):
         self.lineEdit = SearchLineEdit(self)
         self.lineEdit.setPlaceholderText('搜索音乐')
         self.lineEdit.setFixedSize(200, 33)
-        
+
         # self.lineEdit.textEdited.connect(self.keys)
-        self.lineEdit.returnPressed.connect(lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
-        self.lineEdit.searchButton.released.connect(lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
-        
+        self.lineEdit.returnPressed.connect(
+            lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
+        self.lineEdit.searchButton.released.connect(
+            lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
+
         self.numLabel = QLabel('显示数量', self)
         self.spinBox = SpinBox(self)
         self.spinBox.setValue(15)
@@ -70,27 +55,31 @@ class searchmusic(QWidget, QObject):
         # self.worker_thread = QThread()
         # self.worker = Worker()
         # self.worker.moveToThread(self.worker_thread)
-      
+
         self.lworker = getlist()
-        self.dworker = downloading(howto="search")       
+        self.dworker = downloading(howto="search")
         self.upworker = get_update()
         self.lworker.finished.connect(lambda: search(lworker=self.lworker, parent=self,
-                        tableView=self.tableView, spinBox=self.spinBox))
-        self.dworker.finished.connect(lambda Progress: download(progress = Progress, table = self.tableView, progressbar=self.ProgressBar, 
-                            songdata=self.lworker.songInfos, dworker=self.dworker, button=self.primaryButton1, parent=self.window(), howto = "search"))
-        self.upworker.finished.connect(lambda updata: showup(parent = self.window(), updata = updata, upworker = self.upworker))
+                                                     tableView=self.tableView, spinBox=self.spinBox))
+        self.dworker.finished.connect(
+            lambda Progress: download(progress=Progress, table=self.tableView, progressbar=self.ProgressBar,
+                                      songdata=self.lworker.songInfos, dworker=self.dworker, button=self.primaryButton1,
+                                      parent=self.window(), howto="search"))
+        self.upworker.finished.connect(
+            lambda updata: showup(parent=self.window(), updata=updata, upworker=self.upworker))
         # self.worker.finished.connect(self.on_worker_finished)
 
         self.primaryButton1 = PrimaryPushButton('下载', self)
         self.primaryButton1.released.connect(lambda: rundownload(parent=self, primaryButton1=self.primaryButton1,
-                            tableView=self.tableView, dworker=self.dworker, lworker=self.lworker, ProgressBar=self.ProgressBar))
+                                                                 tableView=self.tableView, dworker=self.dworker,
+                                                                 lworker=self.lworker, ProgressBar=self.ProgressBar))
         self.primaryButton1.setEnabled(False)
-        
+
         self.ProgressBar = ProgressBar(self)
         self.ProgressBar.setHidden(True)
         self.ProgressBar.setMaximum(100)
         self.ProgressBar.setFixedWidth(200)
-        
+
         self.layout1.addStretch(100)
         self.layout1.addWidget(self.SearchLabel)
         self.layout1.addSpacing(10)
@@ -131,13 +120,13 @@ class searchmusic(QWidget, QObject):
         self.hBoxLayout.addWidget(self.tableView)
         self.hBoxLayout.addSpacing(60)
         self.hBoxLayout.addLayout(self.layout1)
-        
+
         self.resize(635, 700)
-        
+
         sethotlineEdit(lineEdit=self.lineEdit)
         if helper.config.Config.update_card.value == False:
             self.upworker.start()
-        
+
     def openbutton(self):
         self.primaryButton1.setEnabled(True)
 

@@ -1,13 +1,14 @@
 import json
+import os
+
+import requests
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QTableWidgetItem
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-import os
-import requests
 from helper.config import cfg
-from helper.getvalue import playlist_search_log, playlist_download_log, autoncmaapi, playlistpath
 from helper.flyoutmsg import dlerr, dlwar
+from helper.getvalue import playlist_search_log, playlist_download_log, playlistpath
 
 api = cfg.ncma_api.value
 

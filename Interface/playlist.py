@@ -1,11 +1,13 @@
-from PyQt5.QtWidgets import QWidget, QAbstractItemView, QStyleOptionViewItem, QHBoxLayout, QVBoxLayout, QLabel, QHeaderView
-from qfluentwidgets import ComboBox, LineEdit, PushButton, SubtitleLabel, TableWidget, ProgressBar, PrimaryPushButton, MessageBoxBase, ProgressRing
-from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHBoxLayout, QVBoxLayout, QHeaderView
+from qfluentwidgets import ComboBox, LineEdit, PushButton, SubtitleLabel, TableWidget, ProgressBar, PrimaryPushButton, \
+    MessageBoxBase
 from qfluentwidgets import FluentIcon as FIF
+
 from helper.downloadHelper import downloading, download
-from helper.playlistHelper import getlist, FindLists, searchstart, music, search, rundownload
 from helper.flyoutmsg import setOK
+from helper.playlistHelper import getlist, FindLists, searchstart, music, search, rundownload
+
 
 class playlist(QWidget):
     def __init__(self):

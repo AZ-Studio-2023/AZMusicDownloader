@@ -1,11 +1,12 @@
-from helper.inital import mkf
-from helper.getvalue import localView
-from mutagen.easyid3 import EasyID3
-from mutagen.id3 import ID3NoHeaderError
-from PyQt5.QtWidgets import QTableWidgetItem
 import subprocess
 from os import listdir
 from os.path import join, isfile
+
+from PyQt5.QtWidgets import QTableWidgetItem
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3NoHeaderError
+
+from helper.inital import mkf
 
 mkf()
 

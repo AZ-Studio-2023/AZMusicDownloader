@@ -1,15 +1,20 @@
 # coding: utf-8
-import json, AZMusicAPI
+import AZMusicAPI
+import json
+
+import os
+import requests
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtWidgets import QTableWidgetItem, QCompleter
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QTableWidgetItem, QCompleter
+
 import helper.config
-import requests, os
 from helper.config import cfg, pfg
-from helper.getvalue import download_log, search_log, autoncmaapi
-from helper.inital import mkf
 from helper.flyoutmsg import dlerr, dlwar
-from helper.pluginHelper import plugins_items
+from helper.getvalue import download_log, search_log
+from helper.inital import mkf
+from helper.loggerHelper import logger
+from helper.pluginHelper import plugins_api_items
 
 api = cfg.ncma_api.value
 q_api = cfg.qqma_api.value
@@ -39,9 +44,11 @@ class getlist(QThread):
             self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, server="qqma")
         else:
             try:
-                api_plugin = plugins_items[pfg.apicard.value]
+                api_plugin = plugins_api_items[pfg.apicard.value]
                 self.songInfos = api_plugin.getmusic(keyword=keywords, number=value)
-            except:
+            except Exception as e:
+                if cfg.debug_card.value:
+                    logger.error(f"插件错误：{e}")
                 self.songInfos = "PluginAPIImportError"
         self.finished.emit()
 

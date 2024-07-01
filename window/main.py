@@ -1,27 +1,28 @@
 # coding:utf-8
-import json, sys
-import os
-
-from Interface.searchmusic import searchmusic
-from Interface.settings import SettingInterface
+import sys
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMessageBox, QApplication
-
-from qfluentwidgets import NavigationItemPosition, MSFluentWindow, NavigationItemPosition
+from PyQt5.QtWidgets import QApplication
 from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import MSFluentWindow, NavigationItemPosition
+
 from Interface.localmusics import localmusics
 from Interface.playlist import playlist
 from Interface.plugin import plugins
-from helper.config import cfg,pfg
-from helper.pluginHelper import run_plugins, load_plugins
+from Interface.searchmusic import searchmusic
+from Interface.settings import SettingInterface
+from helper.config import cfg, pfg
 from helper.loggerHelper import logger
+from helper.pluginHelper import run_plugins, load_plugins
+from helper.getvalue import VERSION, UPDATE_ORDER
 
 api = cfg.ncma_api.value
 q_api = cfg.qqma_api.value
 
 # Print logs | 日志输出
 logger.info("欢迎使用AZMusicDownloader")
+logger.info(f"程序版本：{VERSION}")
+logger.info(f"更新编号：{UPDATE_ORDER}")
 if cfg.beta.value:
     logger.warning("Beta实验功能：启用")
 else:

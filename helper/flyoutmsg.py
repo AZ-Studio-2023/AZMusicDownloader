@@ -1,11 +1,13 @@
-from PyQt5.QtCore import Qt
-from qfluentwidgets import InfoBar, InfoBarPosition, PushButton, InfoBarIcon
-from helper.getvalue import outputlist, verdetail, VERSION, RELEASE_URL, AZ_URL
-from qfluentwidgets import PushButton, PrimaryPushButton, FlyoutView, Flyout
-from PyQt5.QtCore import Qt, QUrl
-from qfluentwidgets import FluentIcon as FIF
-from PyQt5.QtGui import QDesktopServices
 from sys import exit
+
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QDesktopServices
+from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import InfoBar, InfoBarPosition, InfoBarIcon
+from qfluentwidgets import PushButton, PrimaryPushButton, FlyoutView, Flyout
+
+from helper.getvalue import outputlist, verdetail, VERSION, RELEASE_URL, AZ_URL
+
 
 def getoutputvalue(outid):
     try:
@@ -103,7 +105,7 @@ def restart(parent):
         content='设置需要重启程序后生效',
         orient=Qt.Vertical,
         position=InfoBarPosition.TOP_RIGHT,
-        duration=1000,
+        duration=3000,
         parent=parent
     )
     s = PushButton("立即关闭应用程序")
@@ -114,7 +116,7 @@ def restart(parent):
 def setOK(parent, howto="settings"):
     if howto == "settings":
         content = '设置已保存'
-        time = 1000
+        time = 1500
     elif howto == "playlists":
         content = "导入任务已提交！稍等片刻，歌单就会出现在列表中。"
         time = 2500

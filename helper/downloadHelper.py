@@ -7,7 +7,9 @@ from helper.config import cfg, pfg
 from helper.getvalue import download_log, playlist_download_log
 from helper.flyoutmsg import dlsuc, dlerr, dlwar
 from win11toast import toast
-from helper.pluginHelper import plugins_items
+
+from helper.loggerHelper import logger
+from helper.pluginHelper import plugins_api_items
 
 thread = None
 
@@ -41,10 +43,11 @@ class downloading(QThread):
             url = AZMusicAPI.geturl(id=id, api=api)
         elif self.howto == "search":
             try:
-                api_plugin = plugins_items[pfg.apicard.value]
+                api_plugin = plugins_api_items[pfg.apicard.value]
                 url = api_plugin.geturl(id=id)
-            except:
+            except Exception as e:
                 url = "PluginAPIImportError"
+                error_msg = e
         else:
             url = AZMusicAPI.geturl(id=id, api=api)
         if url == "Error 3":
@@ -58,6 +61,8 @@ class downloading(QThread):
             self.finished.emit("Error")
         elif url == "PluginAPIImportError":
             self.show_error = "PluginAPIImportError"
+            if cfg.debug_card.value:
+                logger.error(f"插件错误：{error_msg}")
             self.finished.emit("Error")
 
         if not "Error" in url:

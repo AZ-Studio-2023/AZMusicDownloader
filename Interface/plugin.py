@@ -2,18 +2,11 @@ import json
 import os
 import sys
 from helper.inital import setSettingsQss
-from PyQt5.QtCore import Qt, QPoint, QSize, QUrl, QRect, QStandardPaths
-from PyQt5.QtGui import QIcon, QFont, QColor, QPainter
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QSizePolicy
+from PyQt5.QtCore import Qt, QStandardPaths
+from PyQt5.QtWidgets import QWidget
 from helper.config import cfg
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, CustomColorSettingCard,
-                            OptionsSettingCard, FolderListSettingCard, PushSettingCard, setTheme, isDarkTheme,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea, PushButton, PrimaryPushButton,
-                            ComboBoxSettingCard, ExpandLayout, Theme, InfoBar, FlyoutView, Flyout)
-from qfluentwidgets import FluentIcon as FIF
-from qfluentwidgets.components.widgets.acrylic_label import AcrylicBrush
+from qfluentwidgets import SettingCardGroup, FolderListSettingCard, ScrollArea, ExpandLayout
 from helper.pluginHelper import run_plugins_plugin
-import window.main
 
 class plugins(ScrollArea):
 
