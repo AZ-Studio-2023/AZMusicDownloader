@@ -18,8 +18,8 @@ _✨ 优雅地下载音乐✨_
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
     <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-1.5.5-red" alt="PyQt-Fluent-Widgets">
   </a>
-  <a href="https://qm.qq.com/cgi-bin/qm/qr?k=dC63QHGh-kNApdDtxISAg3Adpg84gWCd&jump_from=webapi&authKey=xuvI2AhU2s5dLFtxjHjbg8Hu2y9NKDy3lFpjaYscDWtxeSDIXVUYWw0QN/+hgAUI">
-    <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-808738069-yellow" alt="qq group">
+  <a href="https://qm.qq.com/q/2pmVTzUxwg">
+    <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-929571596-yellow" alt="qq group">
   </a>
 </p>
 
