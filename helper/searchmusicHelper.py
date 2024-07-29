@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QCompleter
 import helper.config
 from helper.config import cfg, pfg
 from helper.flyoutmsg import dlerr, dlwar
-from helper.getvalue import download_log, search_log
+from helper.getvalue import searchSong, set_download_search_song
 from helper.inital import mkf
 from helper.loggerHelper import logger
 from helper.pluginHelper import plugins_api_items
@@ -30,9 +30,7 @@ class getlist(QThread):
 
     @pyqtSlot()
     def run(self):
-        u = open(search_log, "r")
-        data = json.loads(u.read())
-        u.close()
+        data = searchSong
         text = data["text"]
         value = data["value"]
         api_value = data["api_value"]
@@ -69,26 +67,24 @@ def sethotlineEdit(lineEdit):
 
 
 def searchstart(lineEdit, parent, spinBox, lworker):
-    # self.lworker.started.connect(
-    #     lambda: self.lworker.run(text=self.lineEdit.text(), value=self.spinBox.value(), api_value=api))
-    u = open(search_log, "w")
+    global searchSong
     if pfg.apicard.value == "NCMA":
         if api == "" or api is None:
             dlerr(outid=4, parent=parent)
             return "Error"
-        u.write(json.dumps({"text": lineEdit.text(), "api_value": api, "value": spinBox.value()}))
+        searchSong = {"text": lineEdit.text(), "api_value": api, "value": spinBox.value()}
     elif pfg.apicard.value == "QQMA":
         if q_api == "" or q_api is None:
             dlerr(outid=5, parent=parent)
             return "Error"
-        u.write(json.dumps({"text": lineEdit.text(), "api_value": q_api, "value": spinBox.value()}))
+        searchSong = {"text": lineEdit.text(), "api_value": q_api, "value": spinBox.value()}
     else:
-        u.write(json.dumps({"text": lineEdit.text(), "api_value": "", "value": spinBox.value()}))
-    u.close()
+        searchSong = {"text": lineEdit.text(), "api_value": "", "value": spinBox.value()}
     lworker.start()
 
 
 def rundownload(primaryButton1, ProgressBar, tableView, parent, dworker, lworker):
+    global download_search_song
     musicpath = cfg.get(cfg.downloadFolder)
     primaryButton1.setEnabled(False)
     ProgressBar.setHidden(False)
@@ -117,20 +113,19 @@ def rundownload(primaryButton1, ProgressBar, tableView, parent, dworker, lworker
         return 0
 
     # self.dworker.started.connect(lambda: self.dworker.run(id=song_id, api=api, song=song, singer=singer))
-    u = open(download_log, 'w')
     if pfg.apicard.value == "NCMA":
         if api == "" or api is None:
             dlerr(outid=4, parent=parent)
             return "Error"
-        u.write(json.dumps({"id": song_id, "api": api, "song": song, "singer": singer}))
+        download_search_song = {"id": song_id, "api": api, "song": song, "singer": singer}
     elif pfg.apicard.value == "QQMA":
         if q_api == "" or q_api is None:
             dlerr(outid=5, parent=parent)
             return "Error"
-        u.write(json.dumps({"id": song_id, "api": q_api, "song": song, "singer": singer}))
+        download_search_song = {"id": song_id, "api": q_api, "song": song, "singer": singer}
     else:
-        u.write(json.dumps({"id": song_id, "song": song, "singer": singer}))
-    u.close()
+        download_search_song = {"id": song_id, "song": song, "singer": singer}
+    set_download_search_song(value=download_search_song)
     dworker.start()
 
 

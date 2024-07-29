@@ -5,16 +5,10 @@ import ctypes
 
 config_path_value = QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)
 allpath = "{}\\AZMusicDownload".format(config_path_value)
-logpath = "{}\\log".format(allpath)
-playlistpath = "{}\\playlist".format(allpath)
+playlistpath = "{}\\playlists.json".format(allpath)
 
 configpath = "{}\\config.json".format(allpath)
 upurl = "https://json.zenglingkun.cn/update/md/index.json"
-
-download_log = "{}\\download_log.json".format(logpath)
-search_log = "{}\\search_log.json".format(logpath)
-playlist_download_log = "{}\\playlist_download_log.json".format(logpath)
-playlist_search_log = "{}\\playlist_search_log.json".format(logpath)
 
 music_path_value = QStandardPaths.writableLocation(QStandardPaths.MusicLocation)
 autopath = "{}\\AZMusicDownload".format(music_path_value)
@@ -23,6 +17,10 @@ localView = None
 autoncmaapi = "https://ncma.azprod.cn/"  # API为ncma的克隆项目
 autoqqmaapi = ""
 apilists = ['NCMA', 'QQMA']
+playlistSong = ""
+searchSong = ""
+download_search_song = ""
+download_playlist_song = ""
 
 # 古诗
 poem = ["天阶夜色凉如水，卧看牵牛织女星。",
@@ -84,13 +82,33 @@ outputlist = ['未搜索到相关的歌曲，换个关键词试试吧',
               '获取链接失败，建议检查API服务器是否配置了账号Cookie',
               '插件未成功导入，请检查插件']
 
-verdetail = "1.修复导航栏插件禁用Bug\n2.优化更新检查\n3.优化部分代码\n热烈庆祝中国共产党建党103周年！"
+verdetail = "1.更改歌单保存方式\n2.优化逻辑\n由于歌单保存方式改变，请您更新前备份好您的歌单数据"
+
+# 全局变量处理
+def get_download_search_song():
+    global download_search_song
+    return download_search_song
+
+def set_download_search_song(value):
+    global download_search_song
+    download_search_song=value
+
+def get_download_playlist_song():
+    global download_playlist_song
+    return download_playlist_song
+
+def set_download_playlist_song(value):
+    global download_playlist_song
+    download_playlist_song=value
+
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.6.103"
-UPDATE_ORDER = 13
+VERSION = "2.6.5"
+UPDATE_ORDER = 14
 HELP_URL = "https://md.azprod.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.6.0"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.6.5"
 AZ_URL = "https://azstudio.net.cn/"
+PLU_URL = "https://plugins.md.azprod.cn/"
+SERVER_URL = "https://www.lcyidc.com/"

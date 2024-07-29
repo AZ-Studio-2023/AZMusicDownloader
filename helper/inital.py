@@ -1,51 +1,35 @@
 import json, requests, webbrowser
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
-from os import path, makedirs, remove
+from os import path, mkdir, remove, chdir
+import os
 from json import loads
 from helper.flyoutmsg import dlsuc, dlwar, flyout_bottom
 from helper.getvalue import outapoem
 from PyQt5.QtCore import QThread
 from helper.config import cfg
 from qfluentwidgets import isDarkTheme
-from helper.getvalue import (download_log, search_log, configpath, upurl, VERSION,
-                             playlistpath, logpath, playlist_download_log, playlist_search_log, UPDATE_ORDER)
+from helper.getvalue import configpath, upurl, VERSION, playlistpath, UPDATE_ORDER, allpath
+from subprocess import Popen
 
 
 # 初始化创建文件
 def mkf():
     dlpath = cfg.get(cfg.downloadFolder)
-    if not path.exists(logpath):
-        makedirs(logpath)
-    if not path.exists(download_log):
-        d = open(download_log, "w")
-        d.close()
-    if not path.exists(playlist_download_log):
-        d = open(playlist_download_log, "w")
-        d.close()
-    if not path.exists(playlist_search_log):
-        d = open(playlist_search_log, "w")
-        d.close()
-    if not path.exists(search_log):
-        d = open(search_log, "w")
-        d.close()
+    if not path.exists(allpath):
+        mkdir(allpath)
     if not path.exists(dlpath):
-        makedirs(dlpath)
+        mkdir(dlpath)
     if not path.exists(playlistpath):
-        makedirs(playlistpath)
+        chdir(allpath)
+        w = open("playlists.json", 'w')
+        w.write(json.dumps([]))
+        w.close()
 
 
 # 删除用户数据
 def delfin(IfMusicPath=False):
     if path.exists(configpath):
         remove(configpath)
-    if path.exists(playlist_download_log):
-        remove(playlist_download_log)
-    if path.exists(playlist_search_log):
-        remove(playlist_search_log)
-    if path.exists(download_log):
-        remove(download_log)
-    if path.exists(search_log):
-        remove(search_log)
     if IfMusicPath:
         downloadFolder = cfg.get(cfg.downloadFolder)
         if path.exists(downloadFolder):

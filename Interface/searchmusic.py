@@ -10,8 +10,6 @@ import helper.config
 from helper.inital import get_update, showup
 from helper.downloadHelper import downloading, download
 from helper.searchmusicHelper import getlist, sethotlineEdit, search, searchstart, rundownload
-
-
 class CustomTableItemDelegate(TableItemDelegate):
     """ Custom table item delegate """
 
@@ -43,10 +41,9 @@ class searchmusic(QWidget, QObject):
         self.lineEdit.setFixedSize(200, 33)
 
         # self.lineEdit.textEdited.connect(self.keys)
-        self.lineEdit.returnPressed.connect(
-            lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
-        self.lineEdit.searchButton.released.connect(
-            lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker))
+        StartSearch =  lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker)
+        self.lineEdit.returnPressed.connect(StartSearch)
+        self.lineEdit.searchButton.released.connect(StartSearch)
 
         self.numLabel = QLabel('显示数量', self)
         self.spinBox = SpinBox(self)

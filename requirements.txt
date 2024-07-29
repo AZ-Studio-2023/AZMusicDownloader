@@ -2,8 +2,7 @@ AZMusicAPI==1.4.6
 mutagen==1.47.0
 PyQt5==5.15.9
 PyQt5_sip==12.13.0
-PyQt_Fluent_Widgets==1.5.5
-Requests==2.31.0
-colorlog==6.8.2
-winsdk==1.0.0b10
-win11toast==0.35
+PyQt_Fluent_Widgets==1.5.6
+Requests==2.32.2
+colorlog
+win11toast
