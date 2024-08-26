@@ -17,7 +17,7 @@ _✨ 优雅地下载音乐✨_
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
     <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-1.5.6-red" alt="PyQt-Fluent-Widgets">
   </a>
-  <a href="https://qm.qq.com/q/V6eDNN6yGe"">
+  <a href="https://qm.qq.com/q/V6eDNN6yGe">
     <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-929571596-yellow" alt="qq group">
   </a>
 </p>
