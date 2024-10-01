@@ -20,7 +20,7 @@ class playlist(QWidget):
         self.SubtitleLabel = SubtitleLabel("歌单", self)
         self.SubtitleLabel.setObjectName("SubtitleLabel")
         
-        self.ChooseBox = PushButton(FIF.ALBUM, "选择歌单", self)
+        self.ChooseBox = PrimaryPushButton(FIF.ALBUM, "选择歌单", self)
         self.ChooseBox.clicked.connect(self.ChangePlaylist)
         self.StartBox = PushButton("从第三方平台导入", self)
         self.StartBox.clicked.connect(self.StartPutIn)

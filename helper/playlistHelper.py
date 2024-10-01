@@ -52,7 +52,7 @@ class getlist(QThread):
                     except:
                         data_v.append({"id": '-1', "name": 'error', "artists": 'error',
                                        "album": 'error'})
-                    old_data.append({"name": name, "data": data_v})
+                    old_data.append({"id": id_v, "name": name, "data": data_v})
                     f = open(playlistpath, "w", encoding='utf-8')
                     f.write(json.dumps(old_data))
                     f.close()
@@ -82,7 +82,7 @@ class getlist(QThread):
                 except:
                     data_v.append({"id": '-1', "name": 'error', "artists": 'error',
                                    "album": 'error'})
-                old_data.append({"name": name, "data": data_v})
+                old_data.append({"id": id_v, "name": name, "data": data_v})
                 f = open(playlistpath, "w", encoding='utf-8')
                 f.write(json.dumps(old_data))
                 f.close()
