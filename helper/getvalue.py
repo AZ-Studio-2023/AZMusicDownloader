@@ -82,7 +82,7 @@ outputlist = ['未搜索到相关的歌曲，换个关键词试试吧',
               '获取链接失败，建议检查API服务器是否配置了账号Cookie',
               '插件未成功导入，请检查插件']
 
-verdetail = "1.更改歌单保存方式\n2.优化逻辑\n由于歌单保存方式改变，请您更新前备份好您的歌单数据\n热烈庆祝中华人民共和国成立75周年！"
+verdetail = "1.增加登录音乐平台账号功能\n2.修复表格显示不全的问题"
 
 # 全局变量处理
 def get_download_search_song():
@@ -104,11 +104,11 @@ def set_download_playlist_song(value):
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.7.0"
-UPDATE_ORDER = 14
+VERSION = "2.7.2"
+UPDATE_ORDER = 15
 HELP_URL = "https://md.azprod.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.7.0"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.7.2"
 AZ_URL = "https://azteam.cn/"
 PLU_URL = "https://plugins.md.azprod.cn/"
 SERVER_URL = "https://www.lcyidc.com/"

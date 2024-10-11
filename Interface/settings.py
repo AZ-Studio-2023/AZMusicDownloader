@@ -1,8 +1,9 @@
 # coding:utf-8
+from helper.LoginHelper import UserLogin
 from helper.config import cfg, pfg
 from qfluentwidgets import *
 from qfluentwidgets import FluentIcon as FIF
-from PyQt5.QtCore import Qt, pyqtSignal, QUrl
+from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QThreadPool
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 from sys import platform, getwindowsversion
@@ -12,6 +13,38 @@ from helper.localmusicsHelper import ref
 from helper.SettingHelper import DeleteAllData, editapi
 from sys import exit
 from helper.flyoutmsg import changelog, restart,setOK
+
+class LoginMessageBox(MessageBoxBase):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.titleLabel = SubtitleLabel('添加游戏账号')
+        self.type_Label = QLabel("API:", self)
+        self.type_Label.setStyleSheet("QLabel{font-size:15px;font-weight:normal;font-family:Microsoft YaHei;}")
+        self.type_Box = ComboBox()
+        self.type_Box.addItems(["NCMA"])
+        self.tipLabel = StrongBodyLabel(self.tr("请在浏览器中扫码登录，大约5-10秒后将打开页面"), self)
+
+
+        self.viewLayout.addWidget(self.titleLabel)
+        self.viewLayout.addWidget(self.type_Label)
+        self.viewLayout.addWidget(self.type_Box)
+        self.viewLayout.addWidget(self.tipLabel)
+
+        self.login = UserLogin()
+        self.pool = QThreadPool()
+        self.login.signals.progress.connect(self.refresh)
+        self.pool.start(self.login)
+
+        self.widget.setMinimumWidth(350)
+    def refresh(self, code):
+        if code == 200:
+            self.tipLabel.setText("登录成功")
+        else:
+            self.tipLabel.setText("二维码已过期")
+
+    def stop(self):
+        self.pool.clear()
 
 class SettingInterface(ScrollArea):
     micaEnableChanged = pyqtSignal(bool)
@@ -132,6 +165,14 @@ class SettingInterface(ScrollArea):
             texts=apilists,
             parent=self.searchGroup
         )
+        self.loginCard = PushSettingCard(
+            self.tr('登录'),
+            FIF.PEOPLE,
+            self.tr('登录音乐平台账号'),
+            self.tr('当用户拥有VIP，可在此登录以下载完整音频'),
+            parent=self.searchGroup
+        )
+        self.loginCard.button.clicked.connect(self.showMessage)
         
         #BetaOnly
         if cfg.beta.value:
@@ -279,6 +320,7 @@ class SettingInterface(ScrollArea):
         self.searchGroup.addSettingCard(self.twitCard)
         self.searchGroup.addSettingCard(self.hotCard)
         self.searchGroup.addSettingCard(self.apiCard)
+        self.searchGroup.addSettingCard(self.loginCard)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
@@ -354,3 +396,8 @@ class SettingInterface(ScrollArea):
         self.aboutCard.clicked.connect(lambda: changelog(parent=self))
         self.feedbackCard.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
         self.ApiUrlCard.clicked.connect(self.__customapis)
+    def showMessage(self):
+        global ms_login_data
+        w = LoginMessageBox(self.window())
+        if w.exec():
+            w.stop()

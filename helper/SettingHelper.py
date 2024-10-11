@@ -8,6 +8,8 @@ from helper.getvalue import autoncmaapi, autoqqmaapi
 ncma_edited_api = None
 qqma_edited_api = None
 
+
+
 def get_all_api(folders_arg):
     global apilists
     for folder in folders_arg:

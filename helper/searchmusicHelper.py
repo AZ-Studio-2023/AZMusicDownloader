@@ -37,7 +37,7 @@ class getlist(QThread):
         keywords = text
 
         if pfg.apicard.value == "NCMA":
-            self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value)
+            self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, cookie=cfg.cookie.value)
         elif pfg.apicard.value == "QQMA":
             self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, server="qqma")
         else:
@@ -152,12 +152,12 @@ def search(lworker, parent, tableView, spinBox):
         Artist = data["artists"]
         Album = data["album"]
 
-        if len(title) > 8:
-            title = title[:8] + "..."
-        if len(Artist) > 8:
-            Artist = Artist[:8] + "..."
-        if len(Album) > 8:
-            Album = Album[:8] + "..."
+        # if len(title) > 8:
+        #     title = title[:8] + "..."
+        # if len(Artist) > 8:
+        #     Artist = Artist[:8] + "..."
+        # if len(Album) > 8:
+        #     Album = Album[:8] + "..."
 
         data = []
         data.append(str(song_id))

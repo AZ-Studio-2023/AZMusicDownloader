@@ -50,6 +50,9 @@ class Config(QConfig):
         "Search", "twitcard", False, BoolValidator(), restart=True)
     hotcard = ConfigItem(
         "Search", "hotcard", False, BoolValidator(), restart=True)
+    cookie = ConfigItem(
+        "Search", "cookie", ""
+    )
     
     # Personalize
     language = OptionsConfigItem(

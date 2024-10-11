@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://md.azprod.cn/">
+<a href="https://azstudio.net.cn/">
     <img src="https://s21.ax1x.com/2024/05/22/pkM7IRs.png" width="200" height="200" alt="AZ Studio">
   </a>
 
@@ -12,12 +12,12 @@ _✨ 优雅地下载音乐✨_
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" alt="Python">
   <img src="https://img.shields.io/badge/Windows-≥17763-pink?logo=windows" alt="WinOnly">
   <a href="https://pypi.org/project/AZMusicAPI/">
-    <img src="https://img.shields.io/badge/AZMusicAPI-1.4.6-green" alt="AZMusicAPI">
+    <img src="https://img.shields.io/badge/AZMusicAPI-1.4.8-green" alt="AZMusicAPI">
   </a>
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
-    <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-1.5.6-red" alt="PyQt-Fluent-Widgets">
+    <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-red" alt="PyQt-Fluent-Widgets">
   </a>
-  <a href="https://qm.qq.com/q/V6eDNN6yGe">
+  <a href="https://qm.qq.com/q/oq5eFBmugE">
     <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-929571596-yellow" alt="qq group">
   </a>
 </p>
@@ -26,7 +26,7 @@ _✨ 优雅地下载音乐✨_
 
 > 若您需要二次分发本程序，需经过开发者书面同意，并需在您的项目中注明该项目地址
 > 
-> 近期工作室全力开发 Redstone Launcher 项目，本项目更新较缓
+> 近期工作室全力开发 Python Minecraft Launcher 项目，本项目更新较缓
 
 ### 系统要求
 

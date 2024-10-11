@@ -38,7 +38,7 @@ class downloading(QThread):
         if pfg.apicard.value == "QQMA" and self.howto == "search":
             url = AZMusicAPI.geturl(id=id, api=api, server="qqma")
         elif pfg.apicard.value == "NCMA" and self.howto == "search":
-            url = AZMusicAPI.geturl(id=id, api=api)
+            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value)
         elif self.howto == "search":
             try:
                 api_plugin = plugins_api_items[pfg.apicard.value]
@@ -47,7 +47,7 @@ class downloading(QThread):
                 url = "PluginAPIImportError"
                 error_msg = e
         else:
-            url = AZMusicAPI.geturl(id=id, api=api)
+            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value)
         if url == "Error 3":
             self.show_error = "Error 3"
             self.finished.emit("Error")
