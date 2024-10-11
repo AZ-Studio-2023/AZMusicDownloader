@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://azstudio.net.cn/">
+<a href="https://azteam.cn/">
     <img src="https://s21.ax1x.com/2024/05/22/pkM7IRs.png" width="200" height="200" alt="AZ Studio">
   </a>
 
@@ -26,7 +26,9 @@ _✨ 优雅地下载音乐✨_
 
 > 若您需要二次分发本程序，需经过开发者书面同意，并需在您的项目中注明该项目地址
 > 
-> 近期工作室全力开发 Python Minecraft Launcher 项目，本项目更新较缓
+> 近期工作室全力开发 Redstone Launcher 项目，本项目更新较缓
+> 
+> 本程序是通过调用 NeteaseCloudMusicApi 及其他音乐API实现的音乐下载，并未使用非法技术手段破解音乐平台
 
 ### 系统要求
 
