@@ -17,6 +17,7 @@ _✨ 优雅地下载音乐✨_
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
     <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-red" alt="PyQt-Fluent-Widgets">
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FAZ-Studio-2023%2FAZMusicDownloader?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FAZ-Studio-2023%2FAZMusicDownloader.svg?type=shield"/></a>
   <a href="https://qm.qq.com/q/oq5eFBmugE">
     <img src="https://img.shields.io/badge/AZ_Studio%E4%BA%A4%E6%B5%81%E7%BE%A4-929571596-yellow" alt="qq group">
   </a>
@@ -67,3 +68,7 @@ _✨ 优雅地下载音乐✨_
 
 ![Alt](https://repobeats.axiom.co/api/embed/c3811b9d467134f4fe12b9dd9e1c3f72030e2e7f.svg "Repobeats analytics image")
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAZ-Studio-2023%2FAZMusicDownloader.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAZ-Studio-2023%2FAZMusicDownloader?ref=badge_large)
