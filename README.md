@@ -48,11 +48,11 @@ _✨ 优雅地下载音乐✨_
 
 ### 文档
 
-<a href="https://md.azprod.cn/docs">点我跳转</a>
+<a href="https://md.azteam.cn/docs">点我跳转</a>
 
 ### 使用条款
 
-[使用条款](https://md.azprod.cn/docs/rule)
+[使用条款](https://md.azteam.cn/docs/rule)
 
 若您不同意本条款，请退出本页面。您使用本软件即代表您同意本条款。
 
