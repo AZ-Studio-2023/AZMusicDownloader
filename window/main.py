@@ -2,7 +2,7 @@
 import sys
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QDesktopWidget
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import MSFluentWindow, NavigationItemPosition
 
@@ -57,13 +57,22 @@ class Window(MSFluentWindow):
             run_plugins(parent=self)
         self.addSubInterface(SettingInterface(), FIF.SETTING, '设置', position=NavigationItemPosition.BOTTOM)
     def initWindow(self):
-        self.resize(900, 700)
         self.setWindowIcon(QIcon('resource/logo.png'))
         self.setWindowTitle('AZMusicDownloader')
+        screen_resolution = QDesktopWidget().screenGeometry()
+        screen_width = screen_resolution.width()
+        screen_height = screen_resolution.height()
+        window_width = int(screen_width * 0.46875)
+        window_height = int(screen_height * 0.64815)
+        self.setFixedSize(window_width, window_height)
+        self.center()
 
-        desktop = QApplication.desktop().availableGeometry()
-        w, h = desktop.width(), desktop.height()
-        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
-        
+    def center(self):
+        screen_resolution = QDesktopWidget().screenGeometry()
+        screen_width = screen_resolution.width()
+        screen_height = screen_resolution.height()
+        x = (screen_width - self.width()) // 2
+        y = (screen_height - self.height()) // 2
+        self.move(x, y)
     def closeEvent(self, event):
         sys.exit(0)
