@@ -44,7 +44,7 @@ _✨ 优雅地下载音乐✨_
 欢迎Fork并Pull Requests
 
 同时欢迎
-<a href="https://afdian.net/a/chen_mo">爱发电</a>
+<a href="https://afdian.com/a/chen_mo">爱发电</a>
 
 ### 文档
 
