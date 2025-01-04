@@ -1,4 +1,4 @@
-AZMusicAPI==1.4.8
+AZMusicAPI==1.5.1
 mutagen==1.47.0
 PyQt5==5.15.9
 PyQt5_sip==12.13.0

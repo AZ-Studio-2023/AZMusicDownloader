@@ -18,6 +18,7 @@ class localmusics(QWidget):
         self.local_view.resizeColumnsToContents()
         self.local_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.local_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.local_view.itemSelectionChanged.connect(lambda: ref(local_view=self.local_view, musicpath=cfg.get(cfg.downloadFolder)))
 
         ref(local_view=self.local_view, musicpath=cfg.get(cfg.downloadFolder))
 

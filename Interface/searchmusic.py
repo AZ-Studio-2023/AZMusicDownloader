@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QStyleOptionViewItem, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QHeaderView, \
     QAbstractItemView
 from qfluentwidgets import TableWidget, isDarkTheme, TableItemDelegate, SearchLineEdit, \
-    PrimaryPushButton, SpinBox, ProgressBar
+    PrimaryPushButton, SpinBox, ProgressBar, BodyLabel, IndeterminateProgressBar
 from PyQt5.QtCore import QObject
 import helper.config
 from helper.inital import get_update, showup
@@ -35,17 +35,17 @@ class searchmusic(QWidget, QObject):
         self.hBoxLayout = QHBoxLayout(self)
         self.layout1 = QVBoxLayout(self)
 
-        self.SearchLabel = QLabel('输入歌曲名/歌手/专辑名', self)
+        self.SearchLabel = BodyLabel('输入歌曲名/歌手/专辑名', self)
         self.lineEdit = SearchLineEdit(self)
         self.lineEdit.setPlaceholderText('搜索音乐')
         self.lineEdit.setFixedSize(200, 33)
 
         # self.lineEdit.textEdited.connect(self.keys)
-        StartSearch =  lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker)
+        StartSearch =  lambda: searchstart(lineEdit=self.lineEdit, parent=self, spinBox=self.spinBox, lworker=self.lworker, progressbar=self.IndeterminateProgressBar)
         self.lineEdit.returnPressed.connect(StartSearch)
         self.lineEdit.searchButton.released.connect(StartSearch)
 
-        self.numLabel = QLabel('显示数量', self)
+        self.numLabel = BodyLabel('显示数量', self)
         self.spinBox = SpinBox(self)
         self.spinBox.setValue(15)
 
@@ -56,7 +56,7 @@ class searchmusic(QWidget, QObject):
         self.lworker = getlist()
         self.dworker = downloading(howto="search")
         self.upworker = get_update()
-        self.lworker.finished.connect(lambda: search(lworker=self.lworker, parent=self,
+        self.lworker.finished.connect(lambda: search(progressbar=self.IndeterminateProgressBar, lworker=self.lworker, parent=self,
                                                      tableView=self.tableView, spinBox=self.spinBox))
         self.dworker.finished.connect(
             lambda Progress: download(progress=Progress, table=self.tableView, progressbar=self.ProgressBar,
@@ -77,6 +77,11 @@ class searchmusic(QWidget, QObject):
         self.ProgressBar.setMaximum(100)
         self.ProgressBar.setFixedWidth(200)
 
+        self.IndeterminateProgressBar = IndeterminateProgressBar(self, start=True)
+        self.IndeterminateProgressBar.setHidden(True)
+        self.IndeterminateProgressBar.setMaximum(100)
+        self.IndeterminateProgressBar.setFixedWidth(200)
+
         self.layout1.addStretch(100)
         self.layout1.addWidget(self.SearchLabel)
         self.layout1.addSpacing(10)
@@ -89,6 +94,7 @@ class searchmusic(QWidget, QObject):
         self.layout1.addWidget(self.primaryButton1)
         self.layout1.addSpacing(10)
         self.layout1.addWidget(self.ProgressBar)
+        self.layout1.addWidget(self.IndeterminateProgressBar)
         self.layout1.addStretch(100)
 
         self.tableView = TableWidget(self)

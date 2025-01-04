@@ -25,6 +25,41 @@ class LanguageSerializer(ConfigSerializer):
     def deserialize(self, value: str):
         return Language(QLocale(value)) if value != "Auto" else Language.AUTO
 
+from enum import Enum
+
+class AudioQuality(Enum):
+    STANDARD = "standard"
+    HIGHER = "higher"
+    EXHIGH = "exhigh"
+    LOSSLESS = "lossless"
+    HIRES = "hires"
+    JYEFFECT = "jyeffect"
+    SKY = "sky"
+    JYMASTER = "jymaster"
+
+
+class AudioQualitySerializer:
+    """ Audio Quality serializer """
+
+    @staticmethod
+    def serialize(audio_quality: AudioQuality) -> str:
+        """
+        Serialize the audio quality enum into its English string representation.
+        """
+        return audio_quality.value
+
+    @staticmethod
+    def deserialize(value: str) -> AudioQuality:
+        """
+        Deserialize an English string into the appropriate AudioQuality enum.
+        """
+        try:
+            return AudioQuality(value.lower())
+        except ValueError:
+            return AudioQuality.STANDARD
+
+
+
 
 class Config(QConfig):
     # Download
@@ -34,6 +69,8 @@ class Config(QConfig):
         "Download", "ncma_api", autoncmaapi, None)
     qqma_api = ConfigItem(
         "Download", "qqma_api", autoqqmaapi, None)
+    level = OptionsConfigItem(
+        "Download", "level", AudioQuality.STANDARD, validator=OptionsValidator(AudioQuality), serializer=AudioQualitySerializer())
 
     # Application
     beta = ConfigItem(

@@ -10,6 +10,7 @@ from helper.inital import mkf
 
 mkf()
 
+oldIn = []
 
 def get_all_music(path):
     all_music = []
@@ -21,15 +22,19 @@ def get_all_music(path):
 
 
 def ref(musicpath, local_view=None):
-    global localView
+    global localView, oldIn
     if local_view:
         localView = local_view
     if not local_view:
         local_view = localView
-    local_view.clear()
-    local_view.setHorizontalHeaderLabels(['文件名', '歌曲名', '艺术家', '专辑'])
 
     data = get_all_music(path=musicpath)
+    if data == oldIn:
+        return
+    else:
+        oldIn = data
+    local_view.clear()
+    local_view.setHorizontalHeaderLabels(['文件名', '歌曲名', '艺术家', '专辑'])
     songInfos = []
     for stand in data:
         path = join(musicpath, stand)

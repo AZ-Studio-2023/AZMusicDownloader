@@ -66,7 +66,7 @@ def sethotlineEdit(lineEdit):
             pass
 
 
-def searchstart(lineEdit, parent, spinBox, lworker):
+def searchstart(lineEdit, parent, spinBox, lworker, progressbar):
     global searchSong
     if pfg.apicard.value == "NCMA":
         if api == "" or api is None:
@@ -80,6 +80,7 @@ def searchstart(lineEdit, parent, spinBox, lworker):
         searchSong = {"text": lineEdit.text(), "api_value": q_api, "value": spinBox.value()}
     else:
         searchSong = {"text": lineEdit.text(), "api_value": "", "value": spinBox.value()}
+    progressbar.setHidden(False)
     lworker.start()
 
 
@@ -129,8 +130,9 @@ def rundownload(primaryButton1, ProgressBar, tableView, parent, dworker, lworker
     dworker.start()
 
 
-def search(lworker, parent, tableView, spinBox):
+def search(lworker, parent, tableView, spinBox, progressbar):
     songInfos = lworker.songInfos
+    progressbar.setHidden(True)
     if songInfos == "Error 0":
         dlwar(outid=0, parent=parent)
         return 0

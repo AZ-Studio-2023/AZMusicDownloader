@@ -36,6 +36,7 @@ else:
         logger.warning("使用的QQMusicApi：" + "没有配置")
 logger.debug("选择的API："+pfg.apicard.value)
 logger.debug(f"显示语言：{cfg.language.value}")
+logger.debug(f"默认下载音质：{cfg.level.value}")
 
 class Window(MSFluentWindow):
 

@@ -7,7 +7,8 @@ from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QThreadPool
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 from sys import platform, getwindowsversion
-from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, autopath, apilists, SERVER_URL
+from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, autopath, apilists, SERVER_URL, \
+    audio_quality_list
 from helper.inital import delfin, get_update, showup, setSettingsQss
 from helper.localmusicsHelper import ref
 from helper.SettingHelper import DeleteAllData, editapi
@@ -163,6 +164,15 @@ class SettingInterface(ScrollArea):
             self.tr('第三方音乐API'),
             self.tr('仅会修改搜索下载页使用的API。由于QQMA需要账号COOKIE才能进行调用，请自行部署。'),
             texts=apilists,
+            parent=self.searchGroup
+        )
+
+        self.levelCard = ComboBoxSettingCard(
+            pfg.level,
+            FIF.ALBUM,
+            self.tr('默认下载音质'),
+            self.tr('仅对NCMA生效。该项仅保证程序发出的请求无误，无法确保上游API返回的是对应音质的音频。'),
+            texts=audio_quality_list,
             parent=self.searchGroup
         )
         self.loginCard = PushSettingCard(
@@ -321,6 +331,7 @@ class SettingInterface(ScrollArea):
         self.searchGroup.addSettingCard(self.hotCard)
         self.searchGroup.addSettingCard(self.apiCard)
         self.searchGroup.addSettingCard(self.loginCard)
+        self.searchGroup.addSettingCard(self.levelCard)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)

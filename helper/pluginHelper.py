@@ -92,7 +92,11 @@ def run_plugins_plugin(parent, PluginsGroup):
             get_json = open(f"{folder}/index.json", "r", encoding="utf-8")
             data = json.loads(get_json.read())
             get_json.close()
-            addCard(parent, PluginsGroup, data["icon"], data["name"], data["desc"], data["type"], folder)
+            if os.path.exists(data["icon"]):
+                icon = data["icon"]
+            else:
+                icon = os.path.join(folder, data["icon"])
+            addCard(parent, PluginsGroup, icon, data["name"], data["desc"], data["type"], folder)
 
 
 def open_plugin_window(plugin, parent):

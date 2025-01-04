@@ -38,7 +38,7 @@ class downloading(QThread):
         if pfg.apicard.value == "QQMA" and self.howto == "search":
             url = AZMusicAPI.geturl(id=id, api=api, server="qqma")
         elif pfg.apicard.value == "NCMA" and self.howto == "search":
-            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value)
+            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value, level=cfg.level.value.value)
         elif self.howto == "search":
             try:
                 api_plugin = plugins_api_items[pfg.apicard.value]
@@ -47,7 +47,7 @@ class downloading(QThread):
                 url = "PluginAPIImportError"
                 error_msg = e
         else:
-            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value)
+            url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value, level=cfg.level.value.value)
         if url == "Error 3":
             self.show_error = "Error 3"
             self.finished.emit("Error")
@@ -67,7 +67,19 @@ class downloading(QThread):
             response = requests.get(url, stream=True)
             file_size = int(response.headers.get('content-length', 0))
             chunk_size = file_size // 100
-            path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
+            if ".mp3" in url:
+                endName = "mp3"
+            elif ".acc" in url:
+                endName = "acc"
+            elif ".flac" in url:
+                endName = "flac"
+            elif ".wav" in url:
+                endName = "wav"
+            elif ".m4a" in url:
+                endName = "m4a"
+            else:
+                endName = "mp3"
+            path = "{}\\{} - {}.{}".format(musicpath, singer, song, endName)
             with open(path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=chunk_size):
                     f.write(chunk)
