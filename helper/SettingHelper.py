@@ -58,7 +58,7 @@ class CustomAPIs(MessageBoxBase):
     def __init__(self, parent, ncmaapi, qqmaapi):
         super().__init__(parent)
         self.titleLabel = SubtitleLabel('自定义NCMA/QQMA的API地址', self)
-        self.contentLabel = QLabel("API地址是一个完整的，包含协议头的地址。\nNCMA地址必须填写，QQMA由于没有默认值可以不填\n填写错误会导致下载失败，有任何问题请查阅文档", self)
+        self.contentLabel = QLabel("API地址是一个完整的，包含协议头的地址。\nNCMA地址必须填写，QQMA由于没有默认值可以不填。\n填写错误会导致下载失败，有任何问题请查阅文档", self)
         self.contentLabel.setStyleSheet("QLabel{font-size:15px;font-weight:normal;font-family:Microsoft YaHei;}")
         
         # NCMA配置

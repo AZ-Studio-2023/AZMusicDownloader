@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QThreadPool
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 from sys import platform, getwindowsversion
-from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, autopath, apilists, SERVER_URL, \
+from helper.getvalue import YEAR, AUTHOR, VERSION, HELP_URL, FEEDBACK_URL, autopath, apilists, \
     audio_quality_list
 from helper.inital import delfin, get_update, showup, setSettingsQss
 from helper.localmusicsHelper import ref
@@ -19,7 +19,7 @@ class LoginMessageBox(MessageBoxBase):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.titleLabel = SubtitleLabel('添加游戏账号')
+        self.titleLabel = SubtitleLabel('登录账号')
         self.type_Label = QLabel("API:", self)
         self.type_Label.setStyleSheet("QLabel{font-size:15px;font-weight:normal;font-family:Microsoft YaHei;}")
         self.type_Box = ComboBox()
@@ -211,15 +211,15 @@ class SettingInterface(ScrollArea):
             self.tr("给本项目赞助的热心人"),
             self.aboutGroup
         )
-        self.serverCard = HyperlinkCard(
-            SERVER_URL,
-            self.tr('领创云'),
-            FIF.IOT,
-            self.tr('云计算支持'),
-            self.tr('本项目由 领创云 提供云计算支持'),
-            self.sponsor
-        )
-        self.sponsor.addGroupWidget(self.serverCard)
+        # self.serverCard = HyperlinkCard(
+        #     SERVER_URL,
+        #     self.tr('领创云'),
+        #     FIF.IOT,
+        #     self.tr('云计算支持'),
+        #     self.tr('本项目由 领创云 提供云计算支持'),
+        #     self.sponsor
+        # )
+        # self.sponsor.addGroupWidget(self.serverCard)
         self.aboutCard = PushSettingCard(
             self.tr('更新日志'),
             FIF.INFO,

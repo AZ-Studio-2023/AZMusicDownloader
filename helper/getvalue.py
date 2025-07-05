@@ -14,9 +14,9 @@ music_path_value = QStandardPaths.writableLocation(QStandardPaths.MusicLocation)
 autopath = "{}\\AZMusicDownload".format(music_path_value)
 localView = None
 
-autoncmaapi = "https://md.azteam.cn/"  # API为ncma的克隆项目
+autoncmaapi = "https://ncma.azstudio.click/"  # API为ncma的克隆项目
 autoqqmaapi = ""
-apilists = ['NCMA', 'QQMA']
+apilists = ['NCMA', 'QQMA', 'Bilibili']
 playlistSong = ""
 searchSong = ""
 download_search_song = ""
@@ -78,11 +78,11 @@ outputlist = ['未搜索到相关的歌曲，换个关键词试试吧',
               "未配置NeteaseCloudMusicApi地址",
               "未配置QQMusicApi地址",
               '您可能是遇到了以下其一问题：网络错误 / 服务器宕机 / IP被封禁',
-              '这首歌曲无版权，暂不支持下载',
+              '这首歌曲无版权或无法试听，或API出现故障，建议使用Bilibili通道',
               '获取链接失败，建议检查API服务器是否配置了账号Cookie',
               '插件未成功导入，请检查插件']
 
-verdetail = "1.修复API及部分网址\n2.支持设置下载音质（但好像上游API返回的都是普通音质？）\n3.优化搜索UI\n4.修复我的音乐库自动刷新\5.窗口自动适配屏幕分辨率"
+verdetail = "1.修复API及部分网址\n2.新增Bilibili音乐搜索及下载渠道（下载时进度条不动为正常现象）\n3.修复窗口全屏\n4.修复了一些已知问题"
 
 audio_quality_list = [
     "标准",
@@ -115,11 +115,10 @@ def set_download_playlist_song(value):
 
 YEAR = int(date.today().year)
 AUTHOR = "AZ Studio"
-VERSION = "2.8.0"
-UPDATE_ORDER = 16
+VERSION = "2.9.0"
+UPDATE_ORDER = 17
 HELP_URL = "https://md.azteam.cn/docs/"
 FEEDBACK_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/issues"
-RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.8.0"
+RELEASE_URL = "https://github.com/AZ-Studio-2023/AZMusicDownloader/releases/tag/v2.9.0"
 AZ_URL = "https://azteam.cn/"
-PLU_URL = "https://plugins.md.azprod.cn/"
-SERVER_URL = "https://www.lcyidc.com/"
+PLU_URL = "https://plugins.md.azteam.cn/"

@@ -3,6 +3,7 @@ from PyQt5.QtCore import QThread
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 import requests, os
 from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
 from helper.config import cfg, pfg
 from helper.getvalue import get_download_playlist_song, get_download_search_song
 from helper.flyoutmsg import dlsuc, dlerr, dlwar
@@ -10,7 +11,8 @@ from win11toast import toast
 
 from helper.loggerHelper import logger
 from helper.pluginHelper import plugins_api_items
-
+from bilibili_dl.bilibili_dl.downloader import download as bili_download
+from bilibili_dl.bilibili_dl.utils import get_videos_by_bvids
 thread = None
 
 
@@ -34,11 +36,19 @@ class downloading(QThread):
             api = data["api"]
         song = data["song"]
         singer = data["singer"]
-
         if pfg.apicard.value == "QQMA" and self.howto == "search":
             url = AZMusicAPI.geturl(id=id, api=api, server="qqma")
         elif pfg.apicard.value == "NCMA" and self.howto == "search":
             url = AZMusicAPI.geturl(id=id, api=api, cookie=cfg.cookie.value, level=cfg.level.value.value)
+        elif pfg.apicard.value == "Bilibili" and self.howto == "search":
+            bv_list = [id]
+            videos = get_videos_by_bvids(bv_list)
+            old_cwd = os.getcwd()
+            os.chdir(musicpath)
+            bili_download(videos, True)
+            os.chdir(old_cwd)
+            self.finished.emit(str(200))
+            return
         elif self.howto == "search":
             try:
                 api_plugin = plugins_api_items[pfg.apicard.value]
@@ -62,7 +72,10 @@ class downloading(QThread):
             if cfg.debug_card.value:
                 logger.error(f"插件错误：{error_msg}")
             self.finished.emit("Error")
-
+        if url == None:
+            self.show_error = "Error 3"
+            self.finished.emit("Error")
+            return
         if not "Error" in url:
             response = requests.get(url, stream=True)
             file_size = int(response.headers.get('content-length', 0))
@@ -146,15 +159,30 @@ class download(QThread):
             self.button.setEnabled(False)
             path = "{}\\{} - {}.mp3".format(musicpath, singer, song)
             path = os.path.abspath(path)
-
+            if pfg.apicard.value == "Bilibili":
+                try:
+                    os.rename("{}\\{}.mp3".format(musicpath, song), "{}\\{} - {}.mp3".format(musicpath, singer, song))
+                except:
+                    dlerr(outid=3, parent=self.parent)
+                    return
             audio = EasyID3(path)
             audio['title'] = song
             audio['album'] = album
             audio["artist"] = singer
             audio.save()
-
+            audio = MP3(path)
+            duration = audio.info.length
+            if duration == 45 or duration == 30:
+                demo = True
+            else:
+                demo = False
             self.progressbar.setHidden(True)
-            text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
+            if demo and pfg.apicard.value in ["ncma","qqma"]:
+                text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}\n该文件可能为试听版本，可切换至Bilibili通道下载完整版'.format(song, singer, path)
+            elif pfg.apicard.value == "Bilibili":
+                text = '音乐下载完成！\n歌曲名：{}\nUP主：{}\n保存路径：{}'.format(song, singer, path)
+            else:
+                text = '音乐下载完成！\n歌曲名：{}\n艺术家：{}\n保存路径：{}'.format(song, singer, path)
             dlsuc(content=text, parent=self.parent)
             if cfg.toast.value:
                 global thread

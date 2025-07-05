@@ -1,4 +1,4 @@
-AZMusicAPI==1.5.1
+AZMusicAPI==1.6.0
 mutagen==1.47.0
 PyQt5==5.15.9
 PyQt5_sip==12.13.0
@@ -6,3 +6,4 @@ PyQt_Fluent_Widgets==1.5.6
 Requests==2.32.2
 colorlog
 win11toast
+bilibili-dl

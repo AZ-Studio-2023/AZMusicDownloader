@@ -110,7 +110,10 @@ class searchmusic(QWidget, QObject):
         #         self.tableView.setItem(i, j, QTableWidgetItem(songInfo[j]))
 
         self.tableView.verticalHeader().hide()
-        self.tableView.setHorizontalHeaderLabels(['ID', '歌曲名', '艺术家', '专辑'])
+        if helper.config.pfg.apicard.value == "Bilibili":
+            self.tableView.setHorizontalHeaderLabels(['BV号', '歌曲名', 'UP主', '原标题'])
+        else:
+            self.tableView.setHorizontalHeaderLabels(['ID', '歌曲名', '艺术家', '专辑'])
         self.tableView.resizeColumnsToContents()
         self.tableView.itemSelectionChanged.connect(self.openbutton)
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

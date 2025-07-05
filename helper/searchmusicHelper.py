@@ -40,6 +40,8 @@ class getlist(QThread):
             self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, cookie=cfg.cookie.value)
         elif pfg.apicard.value == "QQMA":
             self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api=api_value, server="qqma")
+        elif pfg.apicard.value == "Bilibili":
+            self.songInfos = AZMusicAPI.getmusic(keywords, number=value, api="", server="bili")
         else:
             try:
                 api_plugin = plugins_api_items[pfg.apicard.value]

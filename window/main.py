@@ -65,7 +65,7 @@ class Window(MSFluentWindow):
         screen_height = screen_resolution.height()
         window_width = int(screen_width * 0.46875)
         window_height = int(screen_height * 0.64815)
-        self.setFixedSize(window_width, window_height)
+        self.resize(window_width, window_height)
         self.center()
 
     def center(self):

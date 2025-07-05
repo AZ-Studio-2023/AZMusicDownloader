@@ -12,7 +12,7 @@ _✨ 优雅地下载音乐✨_
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" alt="Python">
   <img src="https://img.shields.io/badge/Windows-≥17763-pink?logo=windows" alt="WinOnly">
   <a href="https://pypi.org/project/AZMusicAPI/">
-    <img src="https://img.shields.io/badge/AZMusicAPI-1.5.1-green" alt="AZMusicAPI">
+    <img src="https://img.shields.io/badge/AZMusicAPI-1.6.0-green" alt="AZMusicAPI">
   </a>
   <a href="https://github.com/zhiyiYo/PyQt-Fluent-Widgets/">
     <img src="https://img.shields.io/badge/PyQt_Fluent_Widgets-red" alt="PyQt-Fluent-Widgets">
