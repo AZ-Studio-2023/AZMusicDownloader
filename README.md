@@ -27,7 +27,7 @@ _✨ 优雅地下载音乐✨_
 
 > 若您需要二次分发本程序，需经过开发者书面同意，并需在您的项目中注明该项目地址
 > 
-> 近期工作室全力开发 Redstone Launcher 项目，本项目更新较缓
+> 近期工作室全力开发 RailGo 项目，本项目更新较缓
 > 
 > 本程序是通过调用 NeteaseCloudMusicApi 及其他音乐API实现的音乐下载，并未使用非法技术手段破解音乐平台
 
@@ -60,10 +60,16 @@ _✨ 优雅地下载音乐✨_
 
 > 本项目部分功能使用了网易云音乐的第三方 API 服务，仅供个人学习研究使用，禁止用于商业及非法用途。同时，本项目开发者承诺：严格遵守相关法律法规和网易云音乐 API 使用协议，不会利用本项目进行任何违法活动。 如因使用本项目而引起的任何纠纷或责任，均由使用者自行承担。本项目开发者不承担任何因使用本项目而导致的任何直接或间接责任，并保留追究使用者违法行为的权利。请使用者在使用本项目时遵守相关法律法规，请勿将本项目用于任何商业及非法用途。如有违反，一切后果由使用者自负。 同时，使用者应该自行承担因使用本项目而带来的风险和责任。本项目开发者不对本项目所提供的服务和内容做出任何保证，感谢您的理解。
 
-### 云计算支持
+### 云服务支持
 
-[领创云](https://www.lcyidc.com/)
+> 本项目的CDN加速和安全防护由腾讯EdgeOne赞助。
 
+<a href="https://edgeone.ai/?from=github">
+<img width="400px" src="https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png">
+</a>
+
+
+### 统计
 ![Star History Chart](https://api.star-history.com/svg?repos=AZ-Studio-2023/AZMusicDownloader&type=Date)
 
 ![Alt](https://repobeats.axiom.co/api/embed/c3811b9d467134f4fe12b9dd9e1c3f72030e2e7f.svg "Repobeats analytics image")
